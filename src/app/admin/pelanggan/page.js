@@ -163,7 +163,7 @@ export default function PelangganPage() {
             }}>
                 <div>
                     <h1 style={{ fontSize: '1.6rem', fontWeight: 800 }}>Manajemen Pelanggan</h1>
-                    <p style={{ color: '#94a3b8', fontSize: '0.95rem' }}>Kelola daftar pelanggan, tarif WiFi bulanan, dan salin link tagihan mereka.</p>
+                    <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem' }}>Kelola daftar pelanggan, tarif WiFi bulanan, dan salin link tagihan mereka.</p>
                 </div>
                 <button className="btn btn-primary" onClick={openAddModal}>
                     <UserPlus size={18} />
@@ -241,7 +241,7 @@ export default function PelangganPage() {
                                                     </div>
                                                     <div>
                                                         <strong style={{ display: 'block', color: 'var(--text-primary)' }}>{user.name}</strong>
-                                                        <span style={{ fontSize: '0.75rem', color: '#64748b' }}>{user.address}</span>
+                                                        <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{user.address}</span>
                                                     </div>
                                                 </div>
                                             </td>
@@ -250,7 +250,7 @@ export default function PelangganPage() {
                                             </td>
                                             <td data-label="Tarif Bulanan">
                                                 <strong className="text-primary">{formatRupiah(user.fee)}</strong>
-                                                <span style={{ fontSize: '0.75rem', color: '#64748b' }}> / bulan</span>
+                                                <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}> / bulan</span>
                                             </td>
                                             <td data-label="Joined">
                                                 <span>{joinedText}</span>
@@ -300,7 +300,7 @@ export default function PelangganPage() {
                             <button onClick={() => setModalOpen(false)} style={{
                                 background: 'transparent',
                                 border: 'none',
-                                color: '#94a3b8',
+                                color: 'var(--text-secondary)',
                                 cursor: 'pointer'
                             }}>
                                 <X size={24} />

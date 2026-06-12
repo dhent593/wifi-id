@@ -331,6 +331,22 @@ export const db = {
         }
     },
 
+    async deletePembayaran(pelangganId, year, month) {
+        if (getUseLocalMode()) {
+            const payments = getLocalPayments().filter(
+                p => !(p.pelanggan_id === pelangganId && p.year === parseInt(year) && p.month === parseInt(month))
+            );
+            saveLocalPayments(payments);
+            return { error: null };
+        }
+        return await supabase
+            .from('pembayaran')
+            .delete()
+            .eq('pelanggan_id', pelangganId)
+            .eq('year', parseInt(year))
+            .eq('month', parseInt(month));
+    },
+
     hasLocalData() {
         if (typeof window === 'undefined') return false;
         const u = localStorage.getItem('wifi_users');

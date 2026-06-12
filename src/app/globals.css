@@ -52,6 +52,55 @@
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.15);
     --shadow-md: 0 12px 30px rgba(0, 0, 0, 0.25);
     --shadow-lg: 0 20px 50px rgba(0, 0, 0, 0.4);
+
+    /* Dynamic background variables */
+    --bg-navbar: rgba(8, 12, 20, 0.85);
+    --gradient-color-1: rgba(59, 130, 246, 0.07);
+    --gradient-color-2: rgba(16, 185, 129, 0.04);
+    --bg-table-sticky: #0e1422;
+    --client-profile-bg: linear-gradient(135deg, rgba(20, 26, 43, 0.85) 0%, rgba(30, 41, 67, 0.85) 100%);
+    --bg-modal: #0e1422;
+}
+
+/* Light Mode Override */
+[data-theme="light"] {
+    /* Light Mode Palette */
+    --bg-app: #f8fafc;
+    --bg-card: rgba(255, 255, 255, 0.85);
+    --bg-card-hover: rgba(255, 255, 255, 0.95);
+    --bg-input: #ffffff;
+    --border-color: rgba(15, 23, 42, 0.08);
+    --border-color-hover: rgba(15, 23, 42, 0.15);
+    
+    /* Text Colors */
+    --text-primary: #0f172a;
+    --text-secondary: #475569;
+    --text-muted: #64748b;
+    
+    /* Accents & States */
+    --primary: #2563eb;
+    --primary-hover: #1d4ed8;
+    --primary-light: rgba(37, 99, 235, 0.1);
+    
+    --success-light: rgba(16, 185, 129, 0.1);
+    --warning-light: rgba(245, 158, 11, 0.1);
+    --danger-light: rgba(239, 68, 68, 0.1);
+    
+    --inactive: #64748b;
+    --inactive-light: rgba(100, 116, 139, 0.1);
+    
+    /* Dynamic background variables overrides */
+    --bg-navbar: rgba(255, 255, 255, 0.85);
+    --gradient-color-1: rgba(37, 99, 235, 0.04);
+    --gradient-color-2: rgba(16, 185, 129, 0.02);
+    --bg-table-sticky: #ffffff;
+    --client-profile-bg: linear-gradient(135deg, rgba(219, 234, 254, 0.7) 0%, rgba(191, 219, 254, 0.7) 100%);
+    --bg-modal: #ffffff;
+    
+    /* Shadows */
+    --shadow-sm: 0 4px 12px rgba(15, 23, 42, 0.03);
+    --shadow-md: 0 12px 30px rgba(15, 23, 42, 0.06);
+    --shadow-lg: 0 20px 50px rgba(15, 23, 42, 0.09);
 }
 
 /* ==========================================================================
@@ -67,15 +116,15 @@ body {
     font-family: var(--font-primary);
     background-color: var(--bg-app);
     background-image: 
-        radial-gradient(at 0% 0%, rgba(59, 130, 246, 0.07) 0px, transparent 50%),
-        radial-gradient(at 100% 100%, rgba(16, 185, 129, 0.04) 0px, transparent 50%);
+        radial-gradient(at 0% 0%, var(--gradient-color-1) 0px, transparent 50%),
+        radial-gradient(at 100% 100%, var(--gradient-color-2) 0px, transparent 50%);
     background-attachment: fixed;
     color: var(--text-primary);
     min-height: 100vh;
     line-height: 1.5;
     overflow-x: hidden;
     padding-bottom: 90px; /* Safe padding for mobile bottom nav */
-    transition: background-color 0.3s ease;
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 @media (min-width: 768px) {
@@ -199,14 +248,14 @@ body {
    NAVIGATION BAR & BOTTOM NAVIGATION (MOBILE)
    ========================================================================== */
 .navbar {
-    background: rgba(8, 12, 20, 0.85);
+    background: var(--bg-navbar);
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
     border-bottom: 1px solid var(--border-color);
     position: sticky;
     top: 0;
     z-index: 100;
-    transition: all 0.3s ease;
+    transition: all 0.3s ease, background-color 0.3s ease;
 }
 
 .nav-container {
@@ -301,6 +350,48 @@ body {
         display: none !important;
     }
 }
+
+    /* Mobile Top Header (Brand & Toggles) */
+    .mobile-header {
+        display: none;
+    }
+
+    @media (max-width: 767px) {
+        .mobile-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 56px;
+            padding: 0 16px;
+            background: var(--bg-navbar);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 999;
+            transition: background-color 0.3s ease;
+        }
+        
+        .mobile-header-logo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            color: var(--text-primary);
+        }
+        
+        .mobile-header-logo span {
+            font-weight: 800;
+            font-size: 1.05rem;
+        }
+
+        .mobile-header-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+    }
 
 /* ==========================================================================
    LAYOUT RESPONSIVE GRIDS (NO INLINE CONFLICTS)
@@ -617,7 +708,7 @@ body {
    CLIENT/CUSTOMER SHARE PAGE SPECIFIC STYLING
    ========================================================================== */
 .client-header {
-    background: rgba(8, 12, 20, 0.85);
+    background: var(--bg-navbar);
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
     border-bottom: 1px solid var(--border-color);
@@ -628,6 +719,7 @@ body {
     position: sticky;
     top: 0;
     z-index: 100;
+    transition: background-color 0.3s ease;
 }
 
 @media (min-width: 768px) {
@@ -654,7 +746,7 @@ body {
 }
 
 .client-profile-card {
-    background: linear-gradient(135deg, rgba(20, 26, 43, 0.85) 0%, rgba(30, 41, 67, 0.85) 100%);
+    background: var(--client-profile-bg);
     border: 1px solid var(--border-color-hover);
     border-radius: var(--radius-lg);
     padding: 24px;
@@ -662,6 +754,7 @@ body {
     flex-direction: column;
     gap: 24px;
     box-shadow: var(--shadow-md);
+    transition: background 0.3s ease, border-color 0.3s ease;
 }
 
 @media (min-width: 768px) {
@@ -1167,16 +1260,17 @@ select {
 }
 
 .modal-container {
-    background-color: #0e1422;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    background-color: var(--bg-modal);
+    border: 1px solid var(--border-color);
     border-radius: var(--radius-lg);
     width: 100%;
     max-width: 540px;
     overflow: hidden;
     box-shadow: var(--shadow-lg);
     position: relative;
-    margin-bottom: 40px; /* Jarak aman di bagian bawah saat di-scroll */
+    margin-bottom: 80px; /* Jarak aman di bagian bawah agar tidak tertutup bottom nav pada mobile */
     animation: modalFadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
 }
 
 /* Floating Action Button (FAB) for adding users on mobile */

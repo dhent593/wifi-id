@@ -3,7 +3,7 @@
 import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { db } from '@/lib/db';
-import { Wifi, Printer, CheckCircle, AlertCircle, HelpCircle, MapPin, CalendarDays, Receipt, X } from 'lucide-react';
+import { Wifi, Printer, CheckCircle, AlertCircle, HelpCircle, MapPin, CalendarDays, Receipt, X, Sun, Moon } from 'lucide-react';
 
 const INDO_MONTHS = [
     'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
@@ -19,6 +19,20 @@ function ClientShareContent() {
     const [loading, setLoading] = useState(true);
     const [errorMsg, setErrorMsg] = useState('');
     const [currentYear, setCurrentYear] = useState(2026);
+    const [theme, setTheme] = useState('dark');
+
+    useEffect(() => {
+        const savedTheme = localStorage.getItem('wifi_theme') || 'dark';
+        setTheme(savedTheme);
+        document.documentElement.setAttribute('data-theme', savedTheme);
+    }, []);
+
+    const toggleTheme = () => {
+        const newTheme = theme === 'dark' ? 'light' : 'dark';
+        setTheme(newTheme);
+        localStorage.setItem('wifi_theme', newTheme);
+        document.documentElement.setAttribute('data-theme', newTheme);
+    };
 
     useEffect(() => {
         const today = new Date();
@@ -74,8 +88,9 @@ function ClientShareContent() {
                 alignItems: 'center',
                 justifyContent: 'center',
                 minHeight: '100vh',
-                background: '#080c14',
-                color: '#f8fafc'
+                background: 'var(--bg-app)',
+                color: 'var(--text-primary)',
+                transition: 'background-color 0.3s ease, color 0.3s ease'
             }}>
                 <div style={{ textAlign: 'center' }}>
                     <div style={{
@@ -106,8 +121,9 @@ function ClientShareContent() {
                 alignItems: 'center',
                 justifyContent: 'center',
                 minHeight: '100vh',
-                background: '#080c14',
-                padding: '16px'
+                background: 'var(--bg-app)',
+                padding: '16px',
+                transition: 'background-color 0.3s ease'
             }}>
                 <div className="card" style={{ maxWidth: '480px', width: '100%', textAlign: 'center', padding: '36px 24px' }}>
                     <AlertCircle size={48} style={{ color: '#ef4444', marginBottom: '16px', display: 'inline-block' }} />
@@ -177,14 +193,30 @@ function ClientShareContent() {
     });
 
     return (
-        <div style={{ minHeight: '100vh', background: '#080c14' }}>
+        <div style={{ minHeight: '100vh', backgroundColor: 'var(--bg-app)', transition: 'background-color 0.3s ease' }}>
             {/* Header */}
             <header className="client-header">
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                     <Wifi size={24} style={{ color: '#3b82f6' }} />
                     <span style={{ fontWeight: 800, fontSize: '1.2rem', letterSpacing: '-0.02em' }}>WiFi-ID</span>
                 </div>
-                <div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                    <button 
+                        onClick={toggleTheme} 
+                        className="btn btn-outline btn-sm" 
+                        style={{ 
+                            padding: '8px', 
+                            minWidth: '38px', 
+                            minHeight: '38px', 
+                            borderRadius: 'var(--radius-sm)', 
+                            display: 'flex', 
+                            alignItems: 'center', 
+                            justifyContent: 'center' 
+                        }}
+                        title={theme === 'dark' ? 'Mode Terang' : 'Mode Gelap'}
+                    >
+                        {theme === 'dark' ? <Sun size={18} style={{ color: '#f59e0b' }} /> : <Moon size={18} />}
+                    </button>
                     <button className="btn btn-outline btn-sm" onClick={() => window.print()}>
                         <Printer size={16} />
                         <span>Cetak Bukti</span>
@@ -201,10 +233,10 @@ function ClientShareContent() {
                         </div>
                         <div>
                             <h1 id="client-name" style={{ fontSize: '1.5rem', fontWeight: 800 }}>{user.name}</h1>
-                            <p id="client-address" style={{ color: '#94a3b8', fontSize: '0.85rem', marginTop: '4px' }}>
+                            <p id="client-address" style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', marginTop: '4px' }}>
                                 <MapPin size={14} style={{ marginRight: '4px' }} /> {user.address}
                             </p>
-                            <p id="client-joined" style={{ color: '#64748b', fontSize: '0.75rem', marginTop: '2px' }}>
+                            <p id="client-joined" style={{ color: 'var(--text-muted)', fontSize: '0.75rem', marginTop: '2px' }}>
                                 <CalendarDays size={14} style={{ marginRight: '4px' }} /> Bergabung sejak: {joinedDate.toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' })}
                             </p>
                         </div>
@@ -322,7 +354,7 @@ function ClientShareContent() {
                 </div>
 
                 <footer className="client-footer" style={{ marginTop: '24px' }}>
-                    <p style={{ color: '#f8fafc', fontWeight: 600 }}>Terima kasih telah berlangganan layanan WiFi kami.</p>
+                    <p style={{ color: 'var(--text-primary)', fontWeight: 600 }}>Terima kasih telah berlangganan layanan WiFi kami.</p>
                     <p className="small text-muted" style={{ fontSize: '0.75rem' }}>Jika Anda menemukan kesalahan pencatatan, silakan hubungi Admin.</p>
                 </footer>
             </div>
@@ -333,7 +365,7 @@ function ClientShareContent() {
 export default function ClientSharePage() {
     return (
         <Suspense fallback={
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', background: '#080c14', color: '#f8fafc' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', background: 'var(--bg-app)', color: 'var(--text-primary)', transition: 'background-color 0.3s ease, color 0.3s ease' }}>
                 <p>Memuat halaman tagihan...</p>
             </div>
         }>

@@ -154,6 +154,27 @@ export default function PembayaranPage() {
         }
     };
 
+    // Mark as unpaid (undo payment)
+    const handleMarkUnpaid = async () => {
+        if (!selectedUser || selectedMonth === null) return;
+
+        const confirmMsg = `Apakah Anda yakin ingin menghapus catatan pembayaran bulan ${INDO_MONTHS[selectedMonth]} ${selectedYear} untuk ${selectedUser.name}?\nStatus pembayaran akan dikembalikan menjadi Belum Bayar.`;
+        
+        if (window.confirm(confirmMsg)) {
+            try {
+                const { error } = await db.deletePembayaran(selectedUser.id, selectedYear, selectedMonth);
+                if (error) throw error;
+                
+                showToast(`Pembayaran bulan ${INDO_MONTHS[selectedMonth]} berhasil dihapus.`, 'success');
+                setModalOpen(false);
+                fetchData();
+            } catch (err) {
+                console.error('Error deleting payment:', err);
+                showToast('Gagal menghapus catatan pembayaran', 'danger');
+            }
+        }
+    };
+
     return (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '28px' }}>
             {/* Page Header */}
@@ -166,7 +187,7 @@ export default function PembayaranPage() {
             }}>
                 <div>
                     <h1 style={{ fontSize: '1.6rem', fontWeight: 800 }}>Pencatatan Pembayaran</h1>
-                    <p style={{ color: '#94a3b8', fontSize: '0.95rem' }}>Pantau status dan input pembayaran bulanan pelanggan.</p>
+                    <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem' }}>Pantau status dan input pembayaran bulanan pelanggan.</p>
                 </div>
                 <div style={{ display: 'flex', gap: '8px' }}>
                     <select
@@ -190,7 +211,7 @@ export default function PembayaranPage() {
                     flexWrap: 'wrap',
                     gap: '12px'
                 }}>
-                    <span style={{ fontSize: '0.85rem', color: '#94a3b8', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: '6px' }}>
                         <HelpCircle size={16} />
                         Petunjuk: Klik kotak bulan untuk mencatat atau mengubah transaksi.
                     </span>
@@ -218,7 +239,7 @@ export default function PembayaranPage() {
                         <table className="table" style={{ minWidth: '950px' }}>
                             <thead>
                                 <tr>
-                                    <th style={{ width: '220px', position: 'sticky', left: 0, zIndex: 10, background: '#0e1422' }}>Nama Pelanggan</th>
+                                    <th style={{ width: '220px', position: 'sticky', left: 0, zIndex: 10, background: 'var(--bg-table-sticky)' }}>Nama Pelanggan</th>
                                     {INDO_MONTHS.map(m => (
                                         <th key={m} style={{ textAlign: 'center' }}>{m.substring(0, 3)}</th>
                                     ))}
@@ -236,12 +257,12 @@ export default function PembayaranPage() {
                                                 position: 'sticky',
                                                 left: 0,
                                                 zIndex: 10,
-                                                background: '#0e1422',
+                                                background: 'var(--bg-table-sticky)',
                                                 borderRight: '1px solid var(--border-color)',
                                                 fontWeight: 600
                                             }}>
                                                 <div>{user.name}</div>
-                                                <div style={{ fontSize: '0.75rem', color: '#64748b', fontWeight: 500 }}>
+                                                <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 500 }}>
                                                     {formatRupiah(user.fee)}/bln
                                                 </div>
                                             </td>
@@ -325,8 +346,8 @@ export default function PembayaranPage() {
                                 <div key={user.id} className="payment-mobile-card">
                                     <div className="payment-mobile-card-header">
                                         <div>
-                                            <strong style={{ display: 'block', fontSize: '1rem', color: '#f8fafc' }}>{user.name}</strong>
-                                            <span style={{ fontSize: '0.8rem', color: '#94a3b8' }}>Tarif: {formatRupiah(user.fee)}/bulan</span>
+                                            <strong style={{ display: 'block', fontSize: '1rem', color: 'var(--text-primary)' }}>{user.name}</strong>
+                                            <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Tarif: {formatRupiah(user.fee)}/bulan</span>
                                         </div>
                                     </div>
 
@@ -400,7 +421,7 @@ export default function PembayaranPage() {
                             <button onClick={() => setModalOpen(false)} style={{
                                 background: 'transparent',
                                 border: 'none',
-                                color: '#94a3b8',
+                                color: 'var(--text-secondary)',
                                 cursor: 'pointer'
                             }}>
                                 <X size={24} />
@@ -419,15 +440,15 @@ export default function PembayaranPage() {
                                 marginBottom: '24px'
                             }}>
                                 <div>
-                                    <span style={{ fontSize: '0.75rem', color: '#94a3b8', display: 'block', fontWeight: 600 }}>Pelanggan</span>
+                                    <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', display: 'block', fontWeight: 600 }}>Pelanggan</span>
                                     <strong style={{ fontSize: '0.9rem' }}>{selectedUser?.name}</strong>
                                 </div>
                                 <div>
-                                    <span style={{ fontSize: '0.75rem', color: '#94a3b8', display: 'block', fontWeight: 600 }}>Periode</span>
+                                    <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', display: 'block', fontWeight: 600 }}>Periode</span>
                                     <strong style={{ fontSize: '0.9rem' }}>{INDO_MONTHS[selectedMonth]} {selectedYear}</strong>
                                 </div>
                                 <div>
-                                    <span style={{ fontSize: '0.75rem', color: '#94a3b8', display: 'block', fontWeight: 600 }}>Tarif Tagihan</span>
+                                    <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', display: 'block', fontWeight: 600 }}>Tarif Tagihan</span>
                                     <strong style={{ fontSize: '0.9rem', color: 'var(--primary)' }}>{formatRupiah(selectedUser?.fee)}</strong>
                                 </div>
                             </div>
@@ -449,13 +470,20 @@ export default function PembayaranPage() {
                                             type="button"
                                             onClick={handlePayFull}
                                             style={{
-                                                fontSize: '0.75rem',
-                                                padding: '4px 8px',
-                                                backgroundColor: 'rgba(59,130,246,0.1)',
-                                                border: '1px solid rgba(59,130,246,0.2)',
+                                                fontSize: '0.8rem',
+                                                fontWeight: '600',
+                                                padding: '6px 12px',
+                                                backgroundColor: 'rgba(59, 130, 246, 0.12)',
+                                                border: '1px solid rgba(59, 130, 246, 0.25)',
                                                 color: '#3b82f6',
-                                                borderRadius: '4px',
-                                                cursor: 'pointer'
+                                                borderRadius: '6px',
+                                                cursor: 'pointer',
+                                                display: 'inline-flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                                lineHeight: '1.2',
+                                                height: 'auto',
+                                                minHeight: 'unset'
                                             }}
                                         >
                                             Bayar Lunas
@@ -509,6 +537,16 @@ export default function PembayaranPage() {
                                 paddingTop: '20px',
                                 borderTop: '1px solid var(--border-color)'
                             }}>
+                                {selectedUser && getPaymentRecord(selectedUser.id, selectedMonth) && (
+                                    <button
+                                        type="button"
+                                        className="btn btn-danger"
+                                        style={{ marginRight: 'auto' }}
+                                        onClick={handleMarkUnpaid}
+                                    >
+                                        Tandai Belum Lunas
+                                    </button>
+                                )}
                                 <button type="button" className="btn btn-outline" onClick={() => setModalOpen(false)}>
                                     Batal
                                 </button>

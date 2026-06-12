@@ -162,13 +162,13 @@ export default function DashboardPage() {
             }}>
                 <div>
                     <h1 style={{ fontSize: '1.6rem', fontWeight: 800, marginBottom: '6px' }}>Halo Admin, Selamat Datang!</h1>
-                    <p style={{ color: '#94a3b8', fontSize: '0.95rem' }}>Berikut ringkasan status pembayaran jaringan WiFi bulan ini.</p>
+                    <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem' }}>Berikut ringkasan status pembayaran jaringan WiFi bulan ini.</p>
                 </div>
                 <div style={{
                     display: 'flex',
                     alignItems: 'center',
                     gap: '8px',
-                    backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                    backgroundColor: 'var(--bg-input)',
                     padding: '8px 16px',
                     borderRadius: '30px',
                     fontSize: '0.85rem',
@@ -187,24 +187,24 @@ export default function DashboardPage() {
                     border: '1px solid rgba(245, 158, 11, 0.25)',
                     borderRadius: 'var(--radius-md)',
                     padding: '20px 24px',
-                    color: '#f59e0b',
+                    color: 'var(--warning)',
                     fontSize: '0.9rem',
                     lineHeight: '1.6',
                     display: 'flex',
                     flexDirection: 'column',
                     gap: '8px'
                 }}>
-                    <strong style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '1rem', color: '#fbbf24' }}>
+                    <strong style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '1rem', color: 'var(--warning)' }}>
                         <AlertCircle size={20} />
                         Perhatian: Aplikasi Berjalan dalam Mode Fallback Lokal (Penyimpanan Sementara)
                     </strong>
-                    <p style={{ margin: 0, color: '#e2e8f0' }}>
+                    <p style={{ margin: 0, color: 'var(--text-primary)' }}>
                         Saat ini data Anda disimpan di memori browser lokal perangkat ini. <strong>Link tagihan pelanggan tidak akan dapat diakses dari perangkat lain, browser lain, atau dalam mode Incognito/Samaran.</strong>
                     </p>
-                    <p style={{ margin: 0, color: '#94a3b8', fontSize: '0.85rem' }}>
+                    <p style={{ margin: 0, color: 'var(--text-secondary)', fontSize: '0.85rem' }}>
                         <strong>Penyebab:</strong> Anda masuk menggunakan kredensial cadangan lokal atau autentikasi cloud gagal/belum terkonfigurasi.
                     </p>
-                    <p style={{ margin: 0, color: '#94a3b8', fontSize: '0.85rem' }}>
+                    <p style={{ margin: 0, color: 'var(--text-secondary)', fontSize: '0.85rem' }}>
                         <strong>Solusi:</strong> Hubungkan database cloud dengan membuat user admin baru ber-email <code>admin@gmail.com</code> dan password <code>palamana</code> di menu <strong>Authentication -&gt; Users</strong> di dashboard Supabase proyek Anda. Setelah dibuat, klik <strong>Keluar</strong> di pojok kanan atas aplikasi ini, lalu login kembali menggunakan kredensial tersebut untuk mengaktifkan sinkronisasi database cloud secara otomatis.
                     </p>
                 </div>
@@ -217,18 +217,18 @@ export default function DashboardPage() {
                     border: '1px solid rgba(16, 185, 129, 0.25)',
                     borderRadius: 'var(--radius-md)',
                     padding: '20px 24px',
-                    color: '#10b981',
+                    color: 'var(--success)',
                     fontSize: '0.9rem',
                     lineHeight: '1.6',
                     display: 'flex',
                     flexDirection: 'column',
                     gap: '12px'
                 }}>
-                    <strong style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '1rem', color: '#34d399' }}>
+                    <strong style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '1rem', color: 'var(--success)' }}>
                         <Coins size={20} />
                         Sinkronisasi Data Lokal Ditemukan!
                     </strong>
-                    <p style={{ margin: 0, color: '#e2e8f0' }}>
+                    <p style={{ margin: 0, color: 'var(--text-primary)' }}>
                         Terdapat data pelanggan dan pembayaran yang tersimpan secara lokal di browser ini (dari sesi offline/fallback sebelumnya). 
                         Anda dapat menyinkronkan data tersebut ke database cloud Supabase agar pelanggan dapat mengakses tautan tagihan mereka di mana saja dan kapan saja.
                     </p>
@@ -279,9 +279,9 @@ export default function DashboardPage() {
                         <Users size={26} />
                     </div>
                     <div>
-                        <h3 style={{ fontSize: '0.85rem', color: '#94a3b8', marginBottom: '4px', fontWeight: 600 }}>Total Pelanggan</h3>
+                        <h3 style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '4px', fontWeight: 600 }}>Total Pelanggan</h3>
                         <p style={{ fontSize: '1.75rem', fontWeight: 800 }}>{stats.totalUsers}</p>
-                        <span style={{ fontSize: '0.75rem', color: '#64748b' }}>Pelanggan aktif terdaftar</span>
+                        <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Pelanggan aktif terdaftar</span>
                     </div>
                 </div>
 
@@ -299,9 +299,9 @@ export default function DashboardPage() {
                         <HandCoins size={26} />
                     </div>
                     <div>
-                        <h3 style={{ fontSize: '0.85rem', color: '#94a3b8', marginBottom: '4px', fontWeight: 600 }}>Pendapatan Bulan Ini</h3>
+                        <h3 style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '4px', fontWeight: 600 }}>Pendapatan Bulan Ini</h3>
                         <p style={{ fontSize: '1.75rem', fontWeight: 800 }}>{formatRupiah(stats.incomeThisMonth)}</p>
-                        <span style={{ fontSize: '0.75rem', color: '#64748b' }}>Bulan {currentMonthName}</span>
+                        <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Bulan {currentMonthName}</span>
                     </div>
                 </div>
 
@@ -319,9 +319,9 @@ export default function DashboardPage() {
                         <AlertCircle size={26} />
                     </div>
                     <div>
-                        <h3 style={{ fontSize: '0.85rem', color: '#94a3b8', marginBottom: '4px', fontWeight: 600 }}>Total Tunggakan</h3>
+                        <h3 style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '4px', fontWeight: 600 }}>Total Tunggakan</h3>
                         <p style={{ fontSize: '1.75rem', fontWeight: 800 }} className="text-danger">{formatRupiah(stats.unpaidThisMonth)}</p>
-                        <span style={{ fontSize: '0.75rem', color: '#64748b' }}>Belum lunas bulan berjalan</span>
+                        <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Belum lunas bulan berjalan</span>
                     </div>
                 </div>
             </div>
@@ -383,7 +383,7 @@ export default function DashboardPage() {
                                                     </div>
                                                     <div>
                                                         <strong style={{ display: 'block', color: 'var(--text-primary)' }}>{debtor.user.name}</strong>
-                                                        <span style={{ fontSize: '0.75rem', color: '#64748b' }}>{debtor.user.address}</span>
+                                                        <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{debtor.user.address}</span>
                                                     </div>
                                                 </div>
                                             </td>
