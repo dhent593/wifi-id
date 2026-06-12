@@ -1,0 +1,664 @@
+/* ==========================================================================
+   WIFI-ID DESIGN SYSTEM
+   ========================================================================== */
+   @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+
+   :root {
+       --font-primary: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+       
+       /* Color Palette - Premium Dark Mode */
+       --bg-app: #080c14;
+       --bg-card: rgba(17, 23, 38, 0.7);
+       --bg-card-hover: rgba(26, 35, 57, 0.95);
+       --bg-input: #0e1320;
+       --border-color: rgba(255, 255, 255, 0.07);
+       --border-color-hover: rgba(255, 255, 255, 0.15);
+       
+       /* Text Colors */
+       --text-primary: #f8fafc;
+       --text-secondary: #94a3b8;
+       --text-muted: #64748b;
+       
+       /* Accents */
+       --primary: #3b82f6;
+       --primary-hover: #2563eb;
+       --primary-light: rgba(59, 130, 246, 0.15);
+       
+       --success: #10b981;
+       --success-hover: #059669;
+       --success-light: rgba(16, 185, 129, 0.12);
+       
+       --warning: #f59e0b;
+       --warning-hover: #d97706;
+       --warning-light: rgba(245, 158, 11, 0.12);
+       
+       --danger: #ef4444;
+       --danger-hover: #dc2626;
+       --danger-light: rgba(239, 68, 68, 0.15);
+       
+       --inactive: #475569;
+       --inactive-light: rgba(71, 85, 105, 0.1);
+       
+       /* Radius */
+       --radius-sm: 8px;
+       --radius-md: 14px;
+       --radius-lg: 20px;
+       
+       /* Layout */
+       --container-max: 1200px;
+       --nav-height: 70px;
+   }
+   
+   /* Reset & Defaults */
+   * {
+       box-sizing: border-box;
+       margin: 0;
+       padding: 0;
+   }
+   
+   body {
+       font-family: var(--font-primary);
+       background-color: var(--bg-app);
+       background-image: 
+           radial-gradient(at 0% 0%, rgba(59, 130, 246, 0.07) 0px, transparent 50%),
+           radial-gradient(at 100% 100%, rgba(16, 185, 129, 0.04) 0px, transparent 50%);
+       background-attachment: fixed;
+       color: var(--text-primary);
+       min-height: 100vh;
+       line-height: 1.5;
+       overflow-x: hidden;
+       padding-bottom: 80px; /* Safe padding for mobile bottom nav */
+   }
+   
+   /* Desktop override for padding */
+   @media (min-width: 768px) {
+       body {
+           padding-bottom: 40px;
+       }
+   }
+   
+   /* Utilities */
+   .hidden { display: none !important; }
+   .text-success { color: var(--success); }
+   .text-danger { color: var(--danger); }
+   .text-warning { color: var(--warning); }
+   .text-muted { color: var(--text-muted); }
+   
+   /* Container */
+   .app-container {
+       max-width: var(--container-max);
+       margin: 0 auto;
+       padding: 24px 16px;
+   }
+   
+   @media (min-width: 768px) {
+       .app-container {
+           padding: 32px 24px;
+       }
+   }
+   
+   /* Glassmorphic Cards */
+   .card {
+       background: var(--bg-card);
+       backdrop-filter: blur(16px);
+       border: 1px solid var(--border-color);
+       border-radius: var(--radius-md);
+       padding: 24px;
+       box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+       transition: all 0.25s ease;
+   }
+   
+   .card:hover {
+       border-color: var(--border-color-hover);
+   }
+   
+   /* ==========================================================================
+      BUTTONS
+      ========================================================================== */
+   .btn {
+       display: inline-flex;
+       align-items: center;
+       justify-content: center;
+       gap: 8px;
+       font-family: var(--font-primary);
+       font-size: 0.9rem;
+       font-weight: 600;
+       padding: 12px 20px;
+       border-radius: var(--radius-sm);
+       border: 1px solid transparent;
+       cursor: pointer;
+       transition: all 0.2s ease;
+       user-select: none;
+       min-height: 44px; /* Mobile Friendly Tap Target */
+   }
+   
+   .btn-primary {
+       background-color: var(--primary);
+       color: #ffffff;
+   }
+   .btn-primary:hover {
+       background-color: var(--primary-hover);
+       box-shadow: 0 4px 14px rgba(59, 130, 246, 0.35);
+   }
+   
+   .btn-secondary {
+       background-color: var(--success-light);
+       color: var(--success);
+       border-color: rgba(16, 185, 129, 0.2);
+   }
+   .btn-secondary:hover {
+       background-color: var(--success);
+       color: #ffffff;
+   }
+   
+   .btn-outline {
+       background-color: transparent;
+       color: var(--text-secondary);
+       border: 1px solid var(--border-color);
+   }
+   .btn-outline:hover {
+       background-color: rgba(255, 255, 255, 0.05);
+       color: var(--text-primary);
+       border-color: var(--text-secondary);
+   }
+   
+   .btn-danger {
+       background-color: var(--danger-light);
+       color: var(--danger);
+       border: 1px solid rgba(239, 68, 68, 0.2);
+   }
+   .btn-danger:hover {
+       background-color: var(--danger);
+       color: #ffffff;
+   }
+   
+   .btn-sm {
+       padding: 8px 14px;
+       font-size: 0.8rem;
+       min-height: 36px;
+   }
+   
+   .btn-block {
+       width: 100%;
+   }
+   
+   /* ==========================================================================
+      NAVIGATION
+      ========================================================================== */
+   .navbar {
+       background: rgba(8, 12, 20, 0.85);
+       backdrop-filter: blur(16px);
+       border-bottom: 1px solid var(--border-color);
+       position: sticky;
+       top: 0;
+       z-index: 100;
+   }
+   
+   .nav-container {
+       max-width: var(--container-max);
+       margin: 0 auto;
+       padding: 0 24px;
+       height: var(--nav-height);
+       display: flex;
+       align-items: center;
+       justify-content: space-between;
+   }
+   
+   .nav-menu {
+       display: flex;
+       gap: 6px;
+   }
+   
+   .nav-link {
+       background: transparent;
+       border: none;
+       color: var(--text-secondary);
+       font-family: var(--font-primary);
+       font-size: 0.9rem;
+       font-weight: 600;
+       padding: 8px 16px;
+       border-radius: var(--radius-sm);
+       cursor: pointer;
+       display: flex;
+       align-items: center;
+       gap: 8px;
+       transition: all 0.2s ease;
+       text-decoration: none;
+   }
+   
+   .nav-link:hover {
+       color: var(--text-primary);
+       background-color: rgba(255, 255, 255, 0.04);
+   }
+   
+   .nav-link.active {
+       color: var(--primary);
+       background-color: var(--primary-light);
+   }
+   
+   /* Mobile Bottom Navbar (Triggered at < 768px) */
+   @media (max-width: 767px) {
+       .navbar {
+           position: fixed;
+           top: auto;
+           bottom: 0;
+           left: 0;
+           right: 0;
+           border-bottom: none;
+           border-top: 1px solid var(--border-color);
+           z-index: 1000;
+           padding-bottom: env(safe-area-inset-bottom);
+       }
+   
+       .nav-container {
+           height: 64px;
+           padding: 0;
+           justify-content: space-around;
+       }
+   
+       .nav-menu {
+           width: 100%;
+           display: flex;
+           justify-content: space-around;
+           gap: 0;
+       }
+   
+       .nav-link {
+           flex-direction: column;
+           gap: 4px;
+           font-size: 0.7rem;
+           font-weight: 500;
+           flex: 1;
+           padding: 8px 0;
+           border-radius: 0;
+           align-items: center;
+           justify-content: center;
+       }
+   
+       .nav-link i, .nav-link svg {
+           font-size: 1.25rem;
+       }
+   
+       .nav-container .logo, 
+       .nav-container .nav-actions {
+           display: none !important;
+       }
+   }
+   
+   /* ==========================================================================
+      BADGES
+      ========================================================================== */
+   .badge {
+       display: inline-flex;
+       align-items: center;
+       gap: 4px;
+       padding: 4px 8px;
+       border-radius: 9999px;
+       font-size: 0.7rem;
+       font-weight: 700;
+       text-transform: uppercase;
+       letter-spacing: 0.05em;
+   }
+   
+   .badge-paid { background-color: var(--success-light); color: var(--success); }
+   .badge-partial { background-color: var(--warning-light); color: var(--warning); }
+   .badge-unpaid { background-color: var(--danger-light); color: var(--danger); }
+   .badge-inactive { background-color: var(--inactive-light); color: var(--text-secondary); }
+   
+   /* ==========================================================================
+      FORM & INPUTS
+      ========================================================================== */
+   .form-group {
+       margin-bottom: 20px;
+       display: flex;
+       flex-direction: column;
+       gap: 8px;
+   }
+   
+   .form-group label {
+       font-size: 0.85rem;
+       font-weight: 600;
+       color: var(--text-secondary);
+   }
+   
+   .input-wrapper {
+       position: relative;
+       display: flex;
+       align-items: center;
+   }
+   
+   .input-icon {
+       position: absolute;
+       left: 14px;
+       color: var(--text-muted);
+       pointer-events: none;
+   }
+   
+   .form-control,
+   .input-wrapper input,
+   .form-group textarea {
+       width: 100%;
+       background-color: var(--bg-input);
+       border: 1px solid var(--border-color);
+       border-radius: var(--radius-sm);
+       color: var(--text-primary);
+       font-family: var(--font-primary);
+       font-size: 0.95rem;
+       padding: 12px 16px;
+       transition: all 0.2s ease;
+   }
+   
+   .input-wrapper input {
+       padding-left: 42px;
+   }
+   
+   .form-control:focus,
+   .input-wrapper input:focus,
+   .form-group textarea:focus {
+       outline: none;
+       border-color: var(--primary);
+       box-shadow: 0 0 0 3px var(--primary-light);
+   }
+   
+   .form-row {
+       display: grid;
+       grid-template-columns: 1fr 1fr;
+       gap: 16px;
+   }
+   
+   @media (max-width: 576px) {
+       .form-row {
+           grid-template-columns: 1fr;
+           gap: 0;
+       }
+   }
+   
+   /* ==========================================================================
+      RESPONSIVE TABLES (CONVERTED TO CARDS ON MOBILE)
+      ========================================================================== */
+   .table-responsive {
+       width: 100%;
+       overflow-x: auto;
+   }
+   
+   .table {
+       width: 100%;
+       border-collapse: collapse;
+       text-align: left;
+       font-size: 0.9rem;
+   }
+   
+   .table th {
+       background-color: rgba(255, 255, 255, 0.01);
+       padding: 16px 20px;
+       font-weight: 700;
+       color: var(--text-secondary);
+       border-bottom: 1px solid var(--border-color);
+   }
+   
+   .table td {
+       padding: 16px 20px;
+       border-bottom: 1px solid var(--border-color);
+       vertical-align: middle;
+   }
+   
+   /* Convert to cards on mobile screen */
+   @media (max-width: 767px) {
+       .mobile-card-table thead {
+           display: none; /* Hide headers */
+       }
+       
+       .mobile-card-table tbody {
+           display: flex;
+           flex-direction: column;
+           gap: 16px;
+           padding: 8px 0;
+       }
+   
+       .mobile-card-table tr {
+           display: flex;
+           flex-direction: column;
+           background: rgba(255, 255, 255, 0.02);
+           border: 1px solid var(--border-color);
+           border-radius: var(--radius-md);
+           padding: 16px;
+           gap: 8px;
+       }
+   
+       .mobile-card-table td {
+           display: flex;
+           justify-content: space-between;
+           align-items: center;
+           padding: 4px 0 !important;
+           border-bottom: none !important;
+           width: 100% !important;
+           position: static !important;
+           background: transparent !important;
+           box-shadow: none !important;
+       }
+   
+       .mobile-card-table td::before {
+           content: attr(data-label);
+           font-weight: 700;
+           color: var(--text-secondary);
+           font-size: 0.8rem;
+           text-transform: uppercase;
+       }
+       
+       .mobile-card-table td .user-info-cell {
+           width: 100%;
+           justify-content: flex-start;
+       }
+       
+       .mobile-card-table td .user-actions {
+           width: 100%;
+           justify-content: flex-end;
+           margin-top: 8px;
+           border-top: 1px solid var(--border-color);
+           padding-top: 12px;
+       }
+   }
+   
+   /* ==========================================================================
+      MONTH GRID (RESPONSIVE)
+      ========================================================================== */
+   .payment-grid-mobile {
+       display: flex;
+       flex-direction: column;
+       gap: 16px;
+   }
+   
+   .payment-mobile-card {
+       background: var(--bg-card);
+       border: 1px solid var(--border-color);
+       border-radius: var(--radius-md);
+       padding: 16px;
+   }
+   
+   .payment-mobile-card-header {
+       display: flex;
+       justify-content: space-between;
+       align-items: center;
+       border-bottom: 1px solid var(--border-color);
+       padding-bottom: 12px;
+       margin-bottom: 12px;
+   }
+   
+   .months-flex-grid {
+       display: grid;
+       grid-template-columns: repeat(4, 1fr); /* 4 Columns on Mobile */
+       gap: 8px;
+   }
+   
+   @media (max-width: 480px) {
+       .months-flex-grid {
+           grid-template-columns: repeat(3, 1fr); /* 3 Columns on very small screens */
+       }
+   }
+   
+   .month-box {
+       aspect-ratio: 1;
+       border-radius: var(--radius-sm);
+       display: flex;
+       flex-direction: column;
+       align-items: center;
+       justify-content: center;
+       font-size: 0.75rem;
+       font-weight: 700;
+       cursor: pointer;
+       border: 1px solid transparent;
+       transition: all 0.2s ease;
+       min-height: 48px;
+   }
+   
+   .month-box:hover {
+       transform: scale(1.05);
+   }
+   
+   .month-box.paid {
+       background-color: var(--success-light);
+       color: var(--success);
+       border-color: rgba(16, 185, 129, 0.2);
+   }
+   
+   .month-box.partial {
+       background-color: var(--warning-light);
+       color: var(--warning);
+       border-color: rgba(245, 158, 11, 0.2);
+   }
+   
+   .month-box.unpaid {
+       background-color: var(--danger-light);
+       color: var(--danger);
+       border-color: rgba(239, 68, 68, 0.2);
+   }
+   
+   .month-box.inactive {
+       background-color: rgba(255, 255, 255, 0.02);
+       color: var(--text-muted);
+       border: 1px dashed var(--border-color);
+       cursor: not-allowed;
+   }
+   
+   /* ==========================================================================
+      MODAL & FLOATING ACTION BUTTONS
+      ========================================================================== */
+   .modal-overlay {
+       position: fixed;
+       top: 0;
+       left: 0;
+       width: 100%;
+       height: 100%;
+       background-color: rgba(0, 0, 0, 0.65);
+       backdrop-filter: blur(8px);
+       display: flex;
+       align-items: center;
+       justify-content: center;
+       padding: 16px;
+       z-index: 2000;
+   }
+   
+   .modal-container {
+       background-color: #0e1422;
+       border: 1px solid var(--border-color-hover);
+       border-radius: var(--radius-lg);
+       width: 100%;
+       max-width: 540px;
+       overflow: hidden;
+       box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+       animation: modalFadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+   }
+   
+   @keyframes modalFadeIn {
+       from { opacity: 0; transform: translateY(12px) scale(0.97); }
+       to { opacity: 1; transform: translateY(0) scale(1); }
+   }
+   
+   /* Floating Action Button (FAB) for mobile adding */
+   .fab {
+       position: fixed;
+       right: 20px;
+       bottom: 80px; /* Safe from bottom nav */
+       width: 56px;
+       height: 56px;
+       border-radius: 50%;
+       background-color: var(--primary);
+       color: #ffffff;
+       border: none;
+       box-shadow: 0 4px 16px rgba(59, 130, 246, 0.4);
+       display: flex;
+       align-items: center;
+       justify-content: center;
+       font-size: 1.5rem;
+       cursor: pointer;
+       z-index: 900;
+       transition: all 0.2s ease;
+   }
+   
+   .fab:hover {
+       background-color: var(--primary-hover);
+       transform: scale(1.05) rotate(90deg);
+   }
+   
+   @media (min-width: 768px) {
+       .fab {
+           display: none !important; /* Hide on desktop */
+       }
+   }
+   
+   /* ==========================================================================
+      TOAST NOTIFICATION System
+      ========================================================================== */
+   .toast-container {
+       position: fixed;
+       top: 20px;
+       right: 20px;
+       z-index: 9999;
+       display: flex;
+       flex-direction: column;
+       gap: 10px;
+       max-width: 360px;
+       width: calc(100% - 40px);
+   }
+   
+   .toast {
+       background: #111827;
+       border: 1px solid var(--border-color);
+       padding: 16px;
+       border-radius: var(--radius-sm);
+       display: flex;
+       align-items: center;
+       gap: 12px;
+       box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+       animation: toastIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+   }
+   
+   @keyframes toastIn {
+       from { transform: translateY(-40px) scale(0.9); opacity: 0; }
+       to { transform: translateY(0) scale(1); opacity: 1; }
+   }
+   
+   /* ==========================================================================
+      PRINT STYLES
+      ========================================================================== */
+   @media print {
+       body {
+           background: white !important;
+           color: black !important;
+           padding-bottom: 0 !important;
+       }
+       .navbar, .btn, .fab, .toast-container {
+           display: none !important;
+       }
+       .app-container {
+           padding: 0 !important;
+           margin: 0 !important;
+           max-width: 100% !important;
+       }
+       .card {
+           background: transparent !important;
+           border: 1px solid #ccc !important;
+           box-shadow: none !important;
+           color: black !important;
+       }
+   }
