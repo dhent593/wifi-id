@@ -98,10 +98,24 @@ const saveLocalPayments = (payments) => {
     }
 };
 
+const generateUUID = () => {
+    if (typeof window !== 'undefined' && window.crypto && window.crypto.randomUUID) {
+        return window.crypto.randomUUID();
+    }
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+        const r = Math.random() * 16 | 0;
+        const v = c === 'x' ? r : (r & 0x3 | 0x8);
+        return v.toString(16);
+    });
+};
+
 // ==========================================================================
 // DB SERVICE INTERFACE
 // ==========================================================================
 export const db = {
+    getMode() {
+        return getUseLocalMode() ? 'local' : 'supabase';
+    },
     // --- Autentikasi ---
     async getSession() {
         if (getUseLocalMode()) {
@@ -314,6 +328,119 @@ export const db = {
         } else {
             // Insert
             return await supabase.from('pembayaran').insert([payload]);
+        }
+    },
+
+    hasLocalData() {
+        if (typeof window === 'undefined') return false;
+        const u = localStorage.getItem('wifi_users');
+        if (!u) return false;
+        try {
+            const users = JSON.parse(u);
+            return users.length > 0;
+        } catch (e) {
+            return false;
+        }
+    },
+
+    async syncLocalDataToCloud() {
+        if (typeof window === 'undefined') return { success: false, error: 'Not in browser environment' };
+        
+        try {
+            const localUsersStr = localStorage.getItem('wifi_users');
+            const localPaymentsStr = localStorage.getItem('wifi_payments');
+            
+            if (!localUsersStr) return { success: true, usersCount: 0, paymentsCount: 0 };
+            
+            const localUsers = JSON.parse(localUsersStr);
+            const localPayments = localPaymentsStr ? JSON.parse(localPaymentsStr) : [];
+            
+            let syncedUsersCount = 0;
+            let syncedPaymentsCount = 0;
+            
+            for (const localUser of localUsers) {
+                // Check if user already exists in Supabase by token
+                const { data: existingUser, error: checkErr } = await supabase
+                    .from('pelanggan')
+                    .select('id')
+                    .eq('token', localUser.token)
+                    .maybeSingle();
+                
+                if (checkErr) throw checkErr;
+                
+                let cloudUserId;
+                
+                if (existingUser) {
+                    cloudUserId = existingUser.id;
+                } else {
+                    cloudUserId = generateUUID();
+                    
+                    const userPayload = {
+                        id: cloudUserId,
+                        name: localUser.name,
+                        phone: localUser.phone,
+                        fee: parseInt(localUser.fee),
+                        address: localUser.address,
+                        joined: localUser.joined,
+                        status: localUser.status || 'aktif',
+                        token: localUser.token
+                    };
+                    
+                    const { error: insertUserErr } = await supabase
+                        .from('pelanggan')
+                        .insert([userPayload]);
+                    
+                    if (insertUserErr) throw insertUserErr;
+                    syncedUsersCount++;
+                }
+                
+                // Get payments for this user in local storage
+                const userPayments = localPayments.filter(p => p.pelanggan_id === localUser.id);
+                
+                for (const localPay of userPayments) {
+                    // Check if payment already exists in Supabase
+                    const { data: existingPay, error: checkPayErr } = await supabase
+                        .from('pembayaran')
+                        .select('id')
+                        .eq('pelanggan_id', cloudUserId)
+                        .eq('year', parseInt(localPay.year))
+                        .eq('month', parseInt(localPay.month))
+                        .maybeSingle();
+                        
+                    if (checkPayErr) throw checkPayErr;
+                    
+                    if (!existingPay) {
+                        const payPayload = {
+                            pelanggan_id: cloudUserId,
+                            year: parseInt(localPay.year),
+                            month: parseInt(localPay.month),
+                            amount_paid: parseInt(localPay.amount_paid),
+                            date: localPay.date,
+                            method: localPay.method,
+                            notes: localPay.notes,
+                            status: localPay.status
+                        };
+                        
+                        const { error: insertPayErr } = await supabase
+                            .from('pembayaran')
+                            .insert([payPayload]);
+                            
+                        if (insertPayErr) throw insertPayErr;
+                        syncedPaymentsCount++;
+                    }
+                }
+            }
+            
+            // Clear local storage data so it doesn't prompt again
+            localStorage.removeItem('wifi_users');
+            localStorage.removeItem('wifi_payments');
+            localStorage.removeItem('wifi_use_local_mode');
+            localStorage.removeItem('wifi_mock_session');
+            
+            return { success: true, usersCount: syncedUsersCount, paymentsCount: syncedPaymentsCount };
+        } catch (e) {
+            console.error('Error syncing local data:', e);
+            return { success: false, error: e.message || e };
         }
     }
 };

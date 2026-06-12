@@ -20,6 +20,11 @@ export default function DashboardPage() {
     const [loading, setLoading] = useState(true);
     const [currentMonthName, setCurrentMonthName] = useState('');
     const [currentYear, setCurrentYear] = useState(2026);
+    const [isLocalMode, setIsLocalMode] = useState(false);
+    const [hasLocalData, setHasLocalData] = useState(false);
+    const [syncing, setSyncing] = useState(false);
+    const [syncMessage, setSyncMessage] = useState('');
+    const [syncStatus, setSyncStatus] = useState('');
 
     useEffect(() => {
         const today = new Date();
@@ -28,6 +33,8 @@ export default function DashboardPage() {
         
         setCurrentYear(year);
         setCurrentMonthName(INDO_MONTHS[month]);
+        setIsLocalMode(db.getMode() === 'local');
+        setHasLocalData(db.hasLocalData());
 
         const fetchDashboardData = async () => {
             try {
@@ -92,6 +99,38 @@ export default function DashboardPage() {
         fetchDashboardData();
     }, []);
 
+    const handleSyncData = async () => {
+        if (!confirm('Apakah Anda yakin ingin menyinkronkan data lokal ke database cloud? Setelah sinkronisasi berhasil, data lokal di browser ini akan dibersihkan.')) {
+            return;
+        }
+
+        setSyncing(true);
+        setSyncMessage('');
+        setSyncStatus('');
+
+        try {
+            const res = await db.syncLocalDataToCloud();
+            if (res.success) {
+                setSyncStatus('success');
+                setSyncMessage(`Sinkronisasi sukses! ${res.usersCount} pelanggan dan ${res.paymentsCount} pembayaran berhasil diunggah ke cloud.`);
+                setHasLocalData(false);
+                
+                // Refresh dashboard data
+                setTimeout(() => {
+                    window.location.reload();
+                }, 3000);
+            } else {
+                setSyncStatus('error');
+                setSyncMessage(`Gagal menyinkronkan data: ${res.error}`);
+            }
+        } catch (err) {
+            setSyncStatus('error');
+            setSyncMessage(`Terjadi kesalahan sistem: ${err.message || err}`);
+        } finally {
+            setSyncing(false);
+        }
+    };
+
     const formatRupiah = (amount) => {
         return new Intl.NumberFormat('id-ID', {
             style: 'currency',
@@ -140,6 +179,89 @@ export default function DashboardPage() {
                     <span>{currentMonthName} {currentYear}</span>
                 </div>
             </div>
+
+            {/* Warning Banner for Local Fallback Mode */}
+            {isLocalMode && (
+                <div style={{
+                    background: 'rgba(245, 158, 11, 0.1)',
+                    border: '1px solid rgba(245, 158, 11, 0.25)',
+                    borderRadius: 'var(--radius-md)',
+                    padding: '20px 24px',
+                    color: '#f59e0b',
+                    fontSize: '0.9rem',
+                    lineHeight: '1.6',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '8px'
+                }}>
+                    <strong style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '1rem', color: '#fbbf24' }}>
+                        <AlertCircle size={20} />
+                        Perhatian: Aplikasi Berjalan dalam Mode Fallback Lokal (Penyimpanan Sementara)
+                    </strong>
+                    <p style={{ margin: 0, color: '#e2e8f0' }}>
+                        Saat ini data Anda disimpan di memori browser lokal perangkat ini. <strong>Link tagihan pelanggan tidak akan dapat diakses dari perangkat lain, browser lain, atau dalam mode Incognito/Samaran.</strong>
+                    </p>
+                    <p style={{ margin: 0, color: '#94a3b8', fontSize: '0.85rem' }}>
+                        <strong>Penyebab:</strong> Anda masuk menggunakan kredensial cadangan lokal atau autentikasi cloud gagal/belum terkonfigurasi.
+                    </p>
+                    <p style={{ margin: 0, color: '#94a3b8', fontSize: '0.85rem' }}>
+                        <strong>Solusi:</strong> Hubungkan database cloud dengan membuat user admin baru ber-email <code>admin@gmail.com</code> dan password <code>palamana</code> di menu <strong>Authentication -&gt; Users</strong> di dashboard Supabase proyek Anda. Setelah dibuat, klik <strong>Keluar</strong> di pojok kanan atas aplikasi ini, lalu login kembali menggunakan kredensial tersebut untuk mengaktifkan sinkronisasi database cloud secara otomatis.
+                    </p>
+                </div>
+            )}
+
+            {/* Sync Local Data Banner */}
+            {!isLocalMode && hasLocalData && (
+                <div style={{
+                    background: 'rgba(16, 185, 129, 0.1)',
+                    border: '1px solid rgba(16, 185, 129, 0.25)',
+                    borderRadius: 'var(--radius-md)',
+                    padding: '20px 24px',
+                    color: '#10b981',
+                    fontSize: '0.9rem',
+                    lineHeight: '1.6',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '12px'
+                }}>
+                    <strong style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '1rem', color: '#34d399' }}>
+                        <Coins size={20} />
+                        Sinkronisasi Data Lokal Ditemukan!
+                    </strong>
+                    <p style={{ margin: 0, color: '#e2e8f0' }}>
+                        Terdapat data pelanggan dan pembayaran yang tersimpan secara lokal di browser ini (dari sesi offline/fallback sebelumnya). 
+                        Anda dapat menyinkronkan data tersebut ke database cloud Supabase agar pelanggan dapat mengakses tautan tagihan mereka di mana saja dan kapan saja.
+                    </p>
+                    {syncMessage && (
+                        <div style={{ 
+                            padding: '8px 12px', 
+                            backgroundColor: syncStatus === 'error' ? 'rgba(239, 68, 68, 0.15)' : 'rgba(16, 185, 129, 0.15)',
+                            color: syncStatus === 'error' ? '#ef4444' : '#10b981',
+                            borderRadius: '6px',
+                            fontSize: '0.85rem'
+                        }}>
+                            {syncMessage}
+                        </div>
+                    )}
+                    <div>
+                        <button 
+                            className="btn btn-success" 
+                            disabled={syncing}
+                            onClick={handleSyncData}
+                            style={{ 
+                                display: 'inline-flex', 
+                                alignItems: 'center', 
+                                gap: '8px',
+                                textDecoration: 'none',
+                                border: 'none',
+                                cursor: syncing ? 'not-allowed' : 'pointer'
+                            }}
+                        >
+                            {syncing ? 'Menyinkronkan...' : 'Sinkronkan Data ke Cloud Sekarang'}
+                        </button>
+                    </div>
+                </div>
+            )}
 
             {/* Stats Cards */}
             <div className="stats-grid">
