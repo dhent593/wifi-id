@@ -388,6 +388,12 @@ body {
     vertical-align: middle;
 }
 
+.user-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
 /* Mobile responsive card list styling for tables */
 @media (max-width: 767px) {
     .mobile-card-table thead {
@@ -404,19 +410,27 @@ body {
     .mobile-card-table tr {
         display: flex;
         flex-direction: column;
-        background: rgba(255, 255, 255, 0.02);
+        background: rgba(255, 255, 255, 0.015);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
         border: 1px solid var(--border-color);
         border-radius: var(--radius-md);
-        padding: 16px;
-        gap: 10px;
+        padding: 20px;
+        gap: 12px;
         box-shadow: var(--shadow-sm);
+        transition: border-color 0.2s ease, transform 0.2s ease;
+    }
+
+    .mobile-card-table tr:hover {
+        border-color: var(--border-color-hover);
+        transform: translateY(-2px);
     }
 
     .mobile-card-table td {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding: 4px 0 !important;
+        padding: 6px 0 !important;
         border-bottom: none !important;
         width: 100% !important;
         position: static !important;
@@ -430,20 +444,71 @@ body {
         color: var(--text-secondary);
         font-size: 0.8rem;
         text-transform: uppercase;
+        letter-spacing: 0.03em;
     }
-    
-    .mobile-card-table td .user-info-cell {
+
+    /* Hide labels for Pelanggan and Aksi to layout them as header/footer in the card */
+    .mobile-card-table td[data-label="Pelanggan"]::before,
+    .mobile-card-table td[data-label="Aksi"]::before,
+    .mobile-card-table td[data-label="Aksi & Sharing"]::before {
+        display: none !important;
+    }
+
+    /* Header Profile section - Avatar on the far left, details next to it */
+    .mobile-card-table td[data-label="Pelanggan"] {
+        justify-content: flex-start !important;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+        padding-bottom: 14px !important;
+        margin-bottom: 4px;
+        width: 100% !important;
+    }
+
+    .mobile-card-table td[data-label="Pelanggan"] > div {
         width: 100%;
-        justify-content: flex-start;
+        display: flex;
+        align-items: flex-start !important; /* Align avatar to top of text */
+        gap: 14px !important;
+    }
+
+    .mobile-card-table td[data-label="Pelanggan"] strong {
+        font-size: 1.15rem !important;
+        font-weight: 700 !important;
+        color: var(--text-primary) !important;
+        line-height: 1.2 !important;
+        margin-bottom: 4px !important;
+    }
+
+    .mobile-card-table td[data-label="Pelanggan"] span {
+        font-size: 0.8rem !important;
+        color: var(--text-secondary) !important;
+        line-height: 1.4 !important;
+    }
+
+    /* Footer Action section - Buttons at the very bottom spanning full width */
+    .mobile-card-table td[data-label="Aksi"] {
+        justify-content: flex-end !important;
+        border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
+        padding-top: 14px !important;
+        margin-top: 4px;
+        width: 100% !important;
     }
     
     .mobile-card-table td .user-actions {
         width: 100%;
+        display: flex;
         justify-content: flex-end;
-        margin-top: 10px;
-        border-top: 1px solid var(--border-color);
-        padding-top: 12px;
-        gap: 8px;
+        align-items: center;
+        gap: 10px;
+        margin-top: 0 !important;
+        border-top: none !important;
+        padding-top: 0 !important;
+    }
+
+    /* Action buttons responsive tweaks */
+    .mobile-card-table td .user-actions .btn {
+        min-height: 40px !important;
+        font-size: 0.85rem !important;
+        padding: 8px 14px !important;
     }
 }
 
