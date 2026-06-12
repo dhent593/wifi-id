@@ -403,6 +403,11 @@ export default function PelangganPage() {
                 </div>
             )}
 
+            {/* Floating Action Button for Mobile */}
+            <button className="fab" onClick={openAddModal} title="Tambah Pelanggan">
+                <UserPlus size={24} />
+            </button>
+
             {/* Toast Notification */}
             {toastMsg && (
                 <div className="toast-container">

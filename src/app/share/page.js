@@ -3,7 +3,7 @@
 import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { db } from '@/lib/db';
-import { Wifi, Printer, CheckCircle, AlertCircle, HelpCircle, MapPin, CalendarDays, Receipt } from 'lucide-react';
+import { Wifi, Printer, CheckCircle, AlertCircle, HelpCircle, MapPin, CalendarDays, Receipt, X } from 'lucide-react';
 
 const INDO_MONTHS = [
     'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
@@ -123,6 +123,10 @@ function ClientShareContent() {
     const joinedYear = joinedDate.getFullYear();
     const joinedMonth = joinedDate.getMonth();
 
+    const today = new Date();
+    const thisYear = today.getFullYear();
+    const thisMonth = today.getMonth();
+
     let totalPaid = 0;
     let totalDebt = 0;
 
@@ -135,11 +139,14 @@ function ClientShareContent() {
         }
 
         const record = payments.find(p => p.year === currentYear && p.month === monthIdx);
+        const isFutureMonth = currentYear > thisYear || (currentYear === thisYear && monthIdx > thisMonth);
         
         if (record) {
             totalPaid += record.amount_paid;
             const debt = Math.max(0, user.fee - record.amount_paid);
-            totalDebt += debt;
+            if (!isFutureMonth) {
+                totalDebt += debt;
+            }
             return {
                 monthIdx,
                 status: record.status, // 'paid' or 'partial'
@@ -148,14 +155,24 @@ function ClientShareContent() {
                 paid: record.amount_paid
             };
         } else {
-            totalDebt += user.fee;
-            return {
-                monthIdx,
-                status: 'unpaid',
-                label: 'BELUM BAYAR',
-                debt: user.fee,
-                paid: 0
-            };
+            if (isFutureMonth) {
+                return {
+                    monthIdx,
+                    status: 'future',
+                    label: 'BELUM TEMPO',
+                    debt: 0,
+                    paid: 0
+                };
+            } else {
+                totalDebt += user.fee;
+                return {
+                    monthIdx,
+                    status: 'unpaid',
+                    label: 'BELUM BAYAR',
+                    debt: user.fee,
+                    paid: 0
+                };
+            }
         }
     });
 
@@ -228,6 +245,9 @@ function ClientShareContent() {
                             } else if (m.status === 'unpaid') {
                                 statusClass = 'unpaid';
                                 icon = <X size={22} />;
+                            } else if (m.status === 'future') {
+                                statusClass = 'future';
+                                icon = <CalendarDays size={22} />;
                             }
 
                             return (

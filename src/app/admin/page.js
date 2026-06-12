@@ -142,11 +142,7 @@ export default function DashboardPage() {
             </div>
 
             {/* Stats Cards */}
-            <div style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-                gap: '20px'
-            }}>
+            <div className="stats-grid">
                 <div className="card" style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
                     <div style={{
                         width: '56px',
@@ -209,11 +205,7 @@ export default function DashboardPage() {
             </div>
 
             {/* Quick Actions & Largest Unpaid */}
-            <div style={{
-                display: 'grid',
-                gridTemplateColumns: '1fr 2fr',
-                gap: '24px'
-            }} className="dashboard-details">
+            <div className="dashboard-details">
                 {/* Quick Actions */}
                 <div className="card" style={{ height: 'fit-content' }}>
                     <h2 style={{ fontSize: '1.1rem', fontWeight: 700, marginBottom: '20px' }}>Aksi Cepat</h2>
@@ -239,7 +231,7 @@ export default function DashboardPage() {
                                 <p style={{ fontWeight: 600 }}>Hebat! Semua pelanggan bulan ini sudah lunas.</p>
                             </div>
                         ) : (
-                            <table className="table">
+                            <table className="table mobile-card-table">
                                 <thead>
                                     <tr>
                                         <th>Pelanggan</th>
@@ -251,7 +243,7 @@ export default function DashboardPage() {
                                 <tbody>
                                     {unpaidDebtors.map(debtor => (
                                         <tr key={debtor.user.id}>
-                                            <td>
+                                            <td data-label="Pelanggan">
                                                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                                                     <div style={{
                                                         width: '32px',
@@ -273,9 +265,9 @@ export default function DashboardPage() {
                                                     </div>
                                                 </div>
                                             </td>
-                                            <td>{debtor.user.phone}</td>
-                                            <td><strong className="text-danger">{formatRupiah(debtor.debt)}</strong></td>
-                                            <td>
+                                            <td data-label="No. HP">{debtor.user.phone}</td>
+                                            <td data-label="Tunggakan"><strong className="text-danger">{formatRupiah(debtor.debt)}</strong></td>
+                                            <td data-label="Aksi">
                                                 <Link href="/admin/pembayaran" className="btn btn-secondary btn-sm" style={{ textDecoration: 'none' }}>
                                                     Bayar
                                                 </Link>

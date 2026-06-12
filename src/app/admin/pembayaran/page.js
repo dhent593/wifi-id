@@ -258,6 +258,11 @@ export default function PembayaranPage() {
                                                 }
 
                                                 const record = getPaymentRecord(user.id, monthIdx);
+                                                const today = new Date();
+                                                const thisYear = today.getFullYear();
+                                                const thisMonth = today.getMonth();
+                                                const isFutureMonth = selectedYear > thisYear || (selectedYear === thisYear && monthIdx > thisMonth);
+
                                                 let cellClass = 'unpaid';
                                                 let cellText = '❌';
                                                 let cellTitle = 'Belum dibayar';
@@ -272,6 +277,10 @@ export default function PembayaranPage() {
                                                         cellText = '⚡';
                                                         cellTitle = `Kurang Rp ${formatRupiah(user.fee - record.amount_paid)}`;
                                                     }
+                                                } else if (isFutureMonth) {
+                                                    cellClass = 'future';
+                                                    cellText = '-';
+                                                    cellTitle = 'Belum jatuh tempo';
                                                 }
 
                                                 return (
@@ -336,6 +345,11 @@ export default function PembayaranPage() {
                                             }
 
                                             const record = getPaymentRecord(user.id, monthIdx);
+                                            const today = new Date();
+                                            const thisYear = today.getFullYear();
+                                            const thisMonth = today.getMonth();
+                                            const isFutureMonth = selectedYear > thisYear || (selectedYear === thisYear && monthIdx > thisMonth);
+
                                             let cellClass = 'unpaid';
                                             let cellLabel = '❌';
 
@@ -347,6 +361,9 @@ export default function PembayaranPage() {
                                                     cellClass = 'partial';
                                                     cellLabel = '⚡';
                                                 }
+                                            } else if (isFutureMonth) {
+                                                cellClass = 'future';
+                                                cellLabel = '-';
                                             }
 
                                             return (

@@ -79,28 +79,19 @@ export default function LoginPage() {
     }
 
     return (
-        <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            minHeight: '100vh',
-            background: '#080c14',
-            padding: '16px'
-        }}>
-            <div className="card" style={{ maxWidth: '420px', width: '100%', padding: '36px 32px' }}>
-                <div style={{ textAlign: 'center', marginBottom: '28px' }}>
-                    <div style={{
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        gap: '10px',
-                        marginBottom: '16px'
-                    }}>
-                        <Wifi size={28} style={{ color: '#3b82f6' }} />
-                        <span style={{ fontWeight: 800, fontSize: '1.6rem', letterSpacing: '-0.02em' }}>WiFi-ID</span>
+        <div className="login-page-bg">
+            {/* Animated Premium Background Glows */}
+            <div className="login-glow-1"></div>
+            <div className="login-glow-2"></div>
+
+            <div className="login-card">
+                <div className="login-header-section">
+                    <div className="login-logo">
+                        <Wifi size={32} />
+                        <span>WiFi-ID</span>
                     </div>
-                    <h2 style={{ fontSize: '1.4rem', fontWeight: 700, marginBottom: '6px' }}>Dashboard Admin</h2>
-                    <p style={{ color: '#94a3b8', fontSize: '0.875rem' }}>Masuk dengan akun Supabase Anda untuk mengelola tagihan</p>
+                    <h2>Dashboard Admin</h2>
+                    <p>Masuk dengan akun Supabase Anda untuk mengelola tagihan</p>
                 </div>
 
                 {errorMsg && (
@@ -136,7 +127,7 @@ export default function LoginPage() {
                         </div>
                     </div>
 
-                    <div className="form-group" style={{ marginBottom: '24px' }}>
+                    <div className="form-group" style={{ marginBottom: '28px' }}>
                         <label htmlFor="password">Password</label>
                         <div className="input-wrapper">
                             <Lock className="input-icon" size={18} />

@@ -16,7 +16,7 @@ create table pelanggan (
     address text not null,
     joined date not null,
     status text not null default 'aktif',
-    token uuid default gen_random_uuid() not null unique,
+    token text not null unique,
     created_at timestamp with time zone default timezone('utc'::text, now()) not null
 );
 
@@ -74,9 +74,9 @@ using (true); -- Kita filter di query aplikasi demi kecocokan token pelanggan
 
 -- 7. Tambahkan Data Dummy Awal (Opsional - untuk demo)
 insert into pelanggan (id, name, phone, fee, address, joined, status, token) values
-('7a8b9c0d-1111-2222-3333-444455556666', 'Budi Santoso', '081234567890', 150000, 'Jl. Melati No. 45, Blok C', '2026-01-10', 'aktif', 'b1111111-1111-1111-1111-111111111111'),
-('7a8b9c0d-2222-3333-4444-555566667777', 'Rina Wijaya', '082345678901', 200000, 'Jl. Mawar Gg. Kelinci No. 12', '2026-03-05', 'aktif', 'r2222222-2222-2222-2222-222222222222'),
-('7a8b9c0d-3333-4444-5555-666677778888', 'Agus Setiawan', '083456789012', 150000, 'Perum Gading Indah, Blok D-10', '2026-05-20', 'aktif', 'a3333333-3333-3333-3333-333333333333');
+('7a8b9c0d-1111-2222-3333-444455556666', 'Budi Santoso', '081234567890', 150000, 'Jl. Melati No. 45, Blok C', '2026-01-10', 'aktif', 'BUDI26'),
+('7a8b9c0d-2222-3333-4444-555566667777', 'Rina Wijaya', '082345678901', 200000, 'Jl. Mawar Gg. Kelinci No. 12', '2026-03-05', 'aktif', 'RINA26'),
+('7a8b9c0d-3333-4444-5555-666677778888', 'Agus Setiawan', '083456789012', 150000, 'Perum Gading Indah, Blok D-10', '2026-05-20', 'aktif', 'AGUS26');
 
 insert into pembayaran (pelanggan_id, year, month, amount_paid, date, method, notes, status) values
 -- Budi Santoso
