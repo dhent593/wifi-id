@@ -91,7 +91,7 @@ export default function LoginPage() {
                         <span>WiFi-ID</span>
                     </div>
                     <h2>Dashboard Admin</h2>
-                    <p>Masuk dengan akun Supabase Anda untuk mengelola tagihan</p>
+                    <p>Masuk dengan akun Admin untuk mengelola tagihan</p>
                 </div>
 
                 {errorMsg && (
@@ -120,7 +120,7 @@ export default function LoginPage() {
                                 id="email"
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
-                                placeholder="nama@email.com"
+                                placeholder="nama@gmail.com"
                                 required
                                 autoComplete="email"
                             />
