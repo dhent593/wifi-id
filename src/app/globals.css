@@ -123,7 +123,7 @@ body {
     min-height: 100vh;
     line-height: 1.5;
     overflow-x: hidden;
-    padding-bottom: 90px; /* Safe padding for mobile bottom nav */
+    padding-bottom: 100px; /* Safe padding for mobile bottom nav */
     transition: background-color 0.3s ease, color 0.3s ease;
 }
 
@@ -135,11 +135,24 @@ body {
 
 /* Utilities */
 .hidden { display: none !important; }
+.hidden-mobile { display: inline-block; }
+@media (max-width: 576px) {
+    .hidden-mobile { display: none !important; }
+}
 .text-success { color: var(--success); }
 .text-danger { color: var(--danger); }
 .text-warning { color: var(--warning); }
 .text-muted { color: var(--text-muted); }
 .text-center { text-align: center; }
+
+/* Responsive Word Wrap and Layout Helpers */
+.profile-info {
+    flex: 1;
+    min-width: 0;
+}
+.profile-info h1 {
+    word-break: break-word;
+}
 
 /* Main Container */
 .app-container {
@@ -305,19 +318,28 @@ body {
     .navbar {
         position: fixed;
         top: auto;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        border-bottom: none;
-        border-top: 1px solid var(--border-color);
+        bottom: 20px;
+        left: 16px;
+        right: 16px;
+        border: 1px solid var(--border-color-hover);
+        border-radius: 24px;
+        background: rgba(13, 18, 30, 0.82);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
         z-index: 1000;
-        padding-bottom: env(safe-area-inset-bottom);
-        box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.3);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4), 0 0 20px rgba(59, 130, 246, 0.05);
+        overflow: hidden;
+        transition: background-color 0.3s ease, border-color 0.3s ease;
+    }
+
+    [data-theme="light"] .navbar {
+        background: rgba(255, 255, 255, 0.82);
+        box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
     }
 
     .nav-container {
-        height: 66px;
-        padding: 0;
+        height: 62px;
+        padding: 0 8px;
         justify-content: space-around;
     }
 
@@ -325,19 +347,34 @@ body {
         width: 100%;
         display: flex;
         justify-content: space-around;
-        gap: 0;
+        gap: 4px;
     }
 
     .nav-link {
         flex-direction: column;
         gap: 4px;
         font-size: 0.72rem;
-        font-weight: 500;
+        font-weight: 600;
         flex: 1;
-        padding: 8px 0;
-        border-radius: 0;
+        padding: 6px 0;
+        border-radius: 16px;
         align-items: center;
         justify-content: center;
+        transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        text-decoration: none;
+    }
+
+    .nav-link:hover {
+        background-color: rgba(255, 255, 255, 0.03);
+    }
+
+    [data-theme="light"] .nav-link:hover {
+        background-color: rgba(15, 23, 42, 0.03);
+    }
+
+    .nav-link.active {
+        color: var(--primary);
+        background-color: var(--primary-light);
     }
 
     .nav-link i, .nav-link svg {
@@ -814,7 +851,7 @@ body {
 
 .profile-status-summary {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(2, 1fr);
     gap: 12px;
     width: 100%;
 }
@@ -856,7 +893,7 @@ body {
     padding: 6px 12px;
     border-radius: var(--radius-sm);
     border: 1px solid rgba(239, 68, 68, 0.15);
-    grid-column: span 3; /* Stretch on mobile */
+    grid-column: span 2; /* Stretch on mobile */
     text-align: center;
 }
 
@@ -1196,6 +1233,12 @@ select {
     z-index: 10;
 }
 
+@media (max-width: 480px) {
+    .login-card {
+        padding: 32px 20px !important;
+    }
+}
+
 .login-card:hover {
     border-color: rgba(59, 130, 246, 0.2) !important;
     box-shadow: 0 24px 60px rgba(0, 0, 0, 0.6), 0 0 100px rgba(59, 130, 246, 0.06) !important;
@@ -1259,6 +1302,12 @@ select {
     overflow-y: auto; /* Memungkinkan scroll overlay jika tinggi form melebihi layar */
 }
 
+@media (max-width: 480px) {
+    .modal-overlay {
+        padding: 16px 8px;
+    }
+}
+
 .modal-container {
     background-color: var(--bg-modal);
     border: 1px solid var(--border-color);
@@ -1271,6 +1320,19 @@ select {
     margin-bottom: 80px; /* Jarak aman di bagian bawah agar tidak tertutup bottom nav pada mobile */
     animation: modalFadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+@media (max-width: 480px) {
+    .modal-container {
+        border-radius: var(--radius-md);
+        margin-bottom: 100px;
+    }
+    .modal-container form {
+        padding: 16px !important;
+    }
+    .modal-container h2 {
+        font-size: 1.1rem !important;
+    }
 }
 
 /* Floating Action Button (FAB) for adding users on mobile */

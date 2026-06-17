@@ -219,7 +219,7 @@ function ClientShareContent() {
                     </button>
                     <button className="btn btn-outline btn-sm" onClick={() => window.print()}>
                         <Printer size={16} />
-                        <span>Cetak Bukti</span>
+                        <span className="hidden-mobile">Cetak Bukti</span>
                     </button>
                 </div>
             </header>
@@ -231,7 +231,7 @@ function ClientShareContent() {
                         <div className="avatar">
                             <Wifi size={28} />
                         </div>
-                        <div>
+                        <div className="profile-info">
                             <h1 id="client-name" style={{ fontSize: '1.5rem', fontWeight: 800 }}>{user.name}</h1>
                             <p id="client-address" style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', marginTop: '4px' }}>
                                 <MapPin size={14} style={{ marginRight: '4px' }} /> {user.address}
@@ -307,7 +307,7 @@ function ClientShareContent() {
                                 <p>Belum ada riwayat transaksi pembayaran.</p>
                             </div>
                         ) : (
-                            <table className="table">
+                            <table className="table mobile-card-table">
                                 <thead>
                                     <tr>
                                         <th>Tanggal Bayar</th>
@@ -331,15 +331,15 @@ function ClientShareContent() {
 
                                         return (
                                             <tr key={pay.id}>
-                                                <td><strong>{payDateText}</strong></td>
-                                                <td>{INDO_MONTHS[pay.month]} {pay.year}</td>
-                                                <td><span className="text-muted">{pay.method}</span></td>
-                                                <td><strong className="text-success">{formatRupiah(pay.amount_paid)}</strong></td>
-                                                <td><span className={debt > 0 ? 'text-danger font-weight-bold' : 'text-muted'}>{formatRupiah(debt)}</span></td>
-                                                <td style={{ maxWidth: '200px', textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }} title={pay.notes}>
+                                                <td data-label="Tanggal"><strong>{payDateText}</strong></td>
+                                                <td data-label="Bulan">{INDO_MONTHS[pay.month]} {pay.year}</td>
+                                                <td data-label="Metode"><span className="text-muted">{pay.method}</span></td>
+                                                <td data-label="Jumlah"><strong className="text-success">{formatRupiah(pay.amount_paid)}</strong></td>
+                                                <td data-label="Kekurangan"><span className={debt > 0 ? 'text-danger font-weight-bold' : 'text-muted'}>{formatRupiah(debt)}</span></td>
+                                                <td data-label="Keterangan" style={{ maxWidth: '200px', textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }} title={pay.notes}>
                                                     {pay.notes || '-'}
                                                 </td>
-                                                <td>
+                                                <td data-label="Status">
                                                     <span className={`badge ${pay.status === 'paid' ? 'badge-paid' : 'badge-partial'}`}>
                                                         {pay.status === 'paid' ? 'Lunas' : 'Kurang'}
                                                     </span>
