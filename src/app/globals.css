@@ -323,7 +323,7 @@ body {
         right: 16px;
         border: 1px solid var(--border-color-hover);
         border-radius: 24px;
-        background: rgba(13, 18, 30, 0.82);
+        background: rgba(13, 18, 30, 0.95);
         backdrop-filter: blur(20px);
         -webkit-backdrop-filter: blur(20px);
         z-index: 1000;
@@ -333,7 +333,7 @@ body {
     }
 
     [data-theme="light"] .navbar {
-        background: rgba(255, 255, 255, 0.82);
+        background: rgba(255, 255, 255, 0.95);
         box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
     }
 
@@ -1383,8 +1383,11 @@ select {
 }
 
 .toast {
-    background: #111827;
+    background: var(--bg-card);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
     border: 1px solid var(--border-color);
+    color: var(--text-primary);
     padding: 16px;
     border-radius: var(--radius-sm);
     display: flex;
@@ -1392,6 +1395,31 @@ select {
     gap: 12px;
     box-shadow: var(--shadow-md);
     animation: toastIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+}
+
+.toast-success {
+    border-left: 4px solid var(--success) !important;
+}
+
+.toast-success .toast-icon {
+    color: var(--success);
+}
+
+.toast-danger {
+    border-left: 4px solid var(--danger) !important;
+}
+
+.toast-danger .toast-icon {
+    color: var(--danger);
+}
+
+.toast-info {
+    border-left: 4px solid var(--primary) !important;
+}
+
+.toast-info .toast-icon {
+    color: var(--primary);
 }
 
 /* ==========================================================================

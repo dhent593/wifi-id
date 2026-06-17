@@ -347,6 +347,18 @@ export const db = {
             .eq('month', parseInt(month));
     },
 
+    async resetPelangganPembayaran(pelangganId) {
+        if (getUseLocalMode()) {
+            const payments = getLocalPayments().filter(p => p.pelanggan_id !== pelangganId);
+            saveLocalPayments(payments);
+            return { error: null };
+        }
+        return await supabase
+            .from('pembayaran')
+            .delete()
+            .eq('pelanggan_id', pelangganId);
+    },
+
     hasLocalData() {
         if (typeof window === 'undefined') return false;
         const u = localStorage.getItem('wifi_users');

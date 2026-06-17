@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { db } from '@/lib/db';
-import { Search, UserPlus, Share2, Pencil, Trash, X, Check } from 'lucide-react';
+import { Search, UserPlus, Share2, Pencil, Trash, X, Check, RotateCcw } from 'lucide-react';
 
 export default function PelangganPage() {
     const [users, setUsers] = useState([]);
@@ -131,6 +131,22 @@ export default function PelangganPage() {
             } catch (err) {
                 console.error('Error deleting user:', err);
                 showToast('Gagal menghapus pelanggan', 'danger');
+            }
+        }
+    };
+
+    // Reset user payments
+    const handleResetPayments = async (id, name) => {
+        if (confirm(`Apakah Anda yakin ingin me-reset data riwayat pembayaran pelanggan "${name}"?\nSemua catatan pembayaran akan dihapus permanen untuk mengosongkan database.`)) {
+            try {
+                const { error } = await db.resetPelangganPembayaran(id);
+
+                if (error) throw error;
+                showToast(`Riwayat pembayaran ${name} berhasil di-reset.`, 'success');
+                fetchUsers();
+            } catch (err) {
+                console.error('Error resetting payments:', err);
+                showToast('Gagal me-reset riwayat pembayaran', 'danger');
             }
         }
     };
@@ -268,6 +284,9 @@ export default function PelangganPage() {
                                                     </button>
                                                     <button className="btn btn-outline btn-sm" onClick={() => openEditModal(user)} title="Edit Profil">
                                                         <Pencil size={14} />
+                                                    </button>
+                                                    <button className="btn btn-outline btn-sm" onClick={() => handleResetPayments(user.id, user.name)} title="Reset Riwayat Pembayaran" style={{ color: 'var(--warning)', borderColor: 'rgba(245, 158, 11, 0.2)' }}>
+                                                        <RotateCcw size={14} />
                                                     </button>
                                                     <button className="btn btn-danger btn-sm" onClick={() => handleDelete(user.id, user.name)} title="Hapus Pelanggan">
                                                         <Trash size={14} />

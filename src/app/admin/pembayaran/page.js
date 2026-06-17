@@ -124,6 +124,13 @@ export default function PembayaranPage() {
         e.preventDefault();
         try {
             const amountPaid = parseInt(formData.amountPaid);
+
+            // Konfirmasi sebelum menyimpan
+            const confirmMsg = `Apakah Anda yakin pelanggan "${selectedUser.name}" sudah membayar sebesar ${formatRupiah(amountPaid)} untuk bulan ${INDO_MONTHS[selectedMonth]} ${selectedYear}?`;
+            if (!window.confirm(confirmMsg)) {
+                return;
+            }
+
             let status = 'unpaid';
             if (amountPaid >= selectedUser.fee) {
                 status = 'paid';
