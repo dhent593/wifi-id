@@ -258,6 +258,48 @@ function ClientShareContent() {
                     </div>
                 </div>
 
+                {/* Rincian Tunggakan alert if any */}
+                {totalDebt > 0 && (
+                    <div className="card" style={{
+                        background: 'rgba(239, 68, 68, 0.08)',
+                        border: '1px solid rgba(239, 68, 68, 0.15)',
+                        borderRadius: 'var(--radius-md)',
+                        padding: '16px 20px',
+                        marginBottom: '20px'
+                    }}>
+                        <h3 style={{ fontSize: '0.95rem', fontWeight: 700, color: '#ef4444', display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+                            <AlertCircle size={18} />
+                            Rincian Bulan Belum Lunas
+                        </h3>
+                        <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', lineHeight: '1.5', margin: '0 0 8px 0' }}>
+                            Silakan lakukan pelunasan untuk tagihan bulan-bulan berikut:
+                        </p>
+                        <ul style={{ margin: 0, paddingLeft: '20px', fontSize: '0.85rem', color: 'var(--text-primary)' }}>
+                            {(() => {
+                                const unpaidList = [];
+                                const maxMonthToCheck = currentYear < thisYear ? 11 : (currentYear === thisYear ? thisMonth : -1);
+                                for (let m = 0; m <= maxMonthToCheck; m++) {
+                                    const isJoined = currentYear > joinedYear || (currentYear === joinedYear && m >= joinedMonth);
+                                    if (isJoined) {
+                                        const pay = payments.find(p => p.year === currentYear && p.month === m);
+                                        if (!pay) {
+                                            unpaidList.push({ name: INDO_MONTHS[m], debt: user.fee });
+                                        } else if (pay.status === 'partial') {
+                                            const debt = Math.max(0, user.fee - pay.amount_paid);
+                                            unpaidList.push({ name: INDO_MONTHS[m], debt, partial: true });
+                                        }
+                                    }
+                                }
+                                return unpaidList.map((m, idx) => (
+                                    <li key={idx} style={{ marginBottom: '4px' }}>
+                                        <strong>{m.name} {currentYear}</strong>: {m.partial ? `Kurang ${formatRupiah(m.debt)}` : `Belum Bayar (${formatRupiah(m.debt)})`}
+                                    </li>
+                                ));
+                            })()}
+                        </ul>
+                    </div>
+                )}
+
                 {/* Timeline Grid */}
                 <div className="card-box card">
                     <div className="card-box-header" style={{ marginBottom: '20px' }}>
@@ -357,6 +399,240 @@ function ClientShareContent() {
                     <p style={{ color: 'var(--text-primary)', fontWeight: 600 }}>Terima kasih telah berlangganan layanan WiFi kami.</p>
                     <p className="small text-muted" style={{ fontSize: '0.75rem' }}>Jika Anda menemukan kesalahan pencatatan, silakan hubungi Admin.</p>
                 </footer>
+            </div>
+
+            {/* Invoice Print Layout (Print Only - Formal IndiHome style) */}
+            <div className="invoice-print-layout">
+                {/* Header Section */}
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '3px solid #ef4444', paddingBottom: '16px', marginBottom: '24px' }}>
+                    <div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+                            <div style={{ width: '32px', height: '32px', backgroundColor: '#ef4444', color: 'white', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold' }}>WF</div>
+                            <span style={{ fontWeight: 900, fontSize: '1.5rem', color: '#1e293b', letterSpacing: '-0.03em' }}>WiFi-<span style={{ color: '#ef4444' }}>ID</span></span>
+                        </div>
+                        <span style={{ fontSize: '0.8rem', color: '#64748b' }}>Layanan Internet Cepat & Stabil</span>
+                    </div>
+                    <div style={{ textAlign: 'right' }}>
+                        <h2 style={{ fontSize: '1.2rem', fontWeight: 800, color: '#ef4444', margin: 0, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Lembar Tagihan</h2>
+                        <span style={{ fontSize: '0.85rem', color: '#64748b', fontWeight: 600 }}>No: INV/{currentYear}/WF-{user.token}</span>
+                    </div>
+                </div>
+
+                {/* Info Metadata & Status Stamp */}
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px', marginBottom: '28px' }}>
+                    {/* Billing Info */}
+                    <div style={{ backgroundColor: '#f8fafc', padding: '16px', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
+                        <h3 style={{ fontSize: '0.85rem', fontWeight: 700, color: '#475569', marginBottom: '12px', textTransform: 'uppercase', letterSpacing: '0.03em' }}>Detail Tagihan</h3>
+                        <table style={{ width: '100%', fontSize: '0.85rem', borderCollapse: 'collapse' }}>
+                            <tbody>
+                                <tr>
+                                    <td style={{ padding: '6px 0', color: '#64748b', fontWeight: 500 }}>Periode Tagihan</td>
+                                    <td style={{ padding: '6px 0', fontWeight: 700, color: '#1e293b', textAlign: 'right' }}>{INDO_MONTHS[thisMonth]} {thisYear}</td>
+                                </tr>
+                                <tr>
+                                    <td style={{ padding: '6px 0', color: '#64748b', fontWeight: 500 }}>Tanggal Cetak</td>
+                                    <td style={{ padding: '6px 0', fontWeight: 600, color: '#1e293b', textAlign: 'right' }}>{new Date().toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' })}</td>
+                                </tr>
+                                <tr>
+                                    <td style={{ padding: '6px 0', color: '#64748b', fontWeight: 500 }}>Jatuh Tempo</td>
+                                    <td style={{ padding: '6px 0', fontWeight: 700, color: '#ef4444', textAlign: 'right' }}>Tanggal 20 {INDO_MONTHS[thisMonth]} {thisYear}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    {/* Status Stamp */}
+                    <div style={{ 
+                        display: 'flex', 
+                        flexDirection: 'column',
+                        alignItems: 'center', 
+                        justifyContent: 'center',
+                        border: totalDebt === 0 ? '3px double #10b981' : '3px double #ef4444',
+                        backgroundColor: totalDebt === 0 ? 'rgba(16, 185, 129, 0.05)' : 'rgba(239, 68, 68, 0.05)',
+                        borderRadius: '12px',
+                        padding: '16px',
+                        textAlign: 'center'
+                    }}>
+                        <span style={{ 
+                            fontSize: '0.8rem', 
+                            fontWeight: 700, 
+                            color: totalDebt === 0 ? '#10b981' : '#ef4444', 
+                            textTransform: 'uppercase',
+                            letterSpacing: '0.1em',
+                            marginBottom: '4px'
+                        }}>Status Pembayaran</span>
+                        <strong style={{ 
+                            fontSize: '1.8rem', 
+                            fontWeight: 900, 
+                            color: totalDebt === 0 ? '#10b981' : '#ef4444',
+                            textTransform: 'uppercase',
+                            letterSpacing: '0.05em'
+                        }}>
+                            {totalDebt === 0 ? 'Lunas' : 'Belum Lunas'}
+                        </strong>
+                    </div>
+                </div>
+
+                {/* Customer Info Section */}
+                <div style={{ border: '1px solid #e2e8f0', borderRadius: '12px', padding: '18px', marginBottom: '28px' }}>
+                    <h3 style={{ fontSize: '0.85rem', fontWeight: 700, color: '#475569', marginBottom: '14px', textTransform: 'uppercase', letterSpacing: '0.03em', borderBottom: '1px solid #e2e8f0', paddingBottom: '6px' }}>Data Pelanggan</h3>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', fontSize: '0.85rem' }}>
+                        <div>
+                            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                                <tbody>
+                                    <tr>
+                                        <td style={{ padding: '4px 0', color: '#64748b', width: '120px' }}>ID Pelanggan</td>
+                                        <td style={{ padding: '4px 0', fontWeight: 700, color: '#1e293b' }}>WF-{user.token}</td>
+                                    </tr>
+                                    <tr>
+                                        <td style={{ padding: '4px 0', color: '#64748b' }}>Nama Pelanggan</td>
+                                        <td style={{ padding: '4px 0', fontWeight: 600, color: '#1e293b' }}>{user.name}</td>
+                                    </tr>
+                                    <tr>
+                                        <td style={{ padding: '4px 0', color: '#64748b' }}>No. HP</td>
+                                        <td style={{ padding: '4px 0', color: '#1e293b' }}>{user.phone}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div>
+                            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                                <tbody>
+                                    <tr>
+                                        <td style={{ padding: '4px 0', color: '#64748b', verticalAlign: 'top', width: '120px' }}>Alamat Instalasi</td>
+                                        <td style={{ padding: '4px 0', color: '#1e293b', fontWeight: 500, lineHeight: 1.4 }}>{user.address}</td>
+                                    </tr>
+                                    <tr>
+                                        <td style={{ padding: '4px 0', color: '#64748b' }}>Tanggal Pasang</td>
+                                        <td style={{ padding: '4px 0', color: '#1e293b' }}>{joinedDate.toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' })}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Items Breakdown Table */}
+                <div style={{ marginBottom: '28px' }}>
+                    <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.85rem' }}>
+                        <thead>
+                            <tr style={{ backgroundColor: '#f1f5f9', borderTop: '1px solid #cbd5e1', borderBottom: '1px solid #cbd5e1' }}>
+                                <th style={{ padding: '10px 12px', textAlign: 'left', color: '#475569', fontWeight: 700, width: '40px' }}>No</th>
+                                <th style={{ padding: '10px 12px', textAlign: 'left', color: '#475569', fontWeight: 700 }}>Deskripsi Layanan</th>
+                                <th style={{ padding: '10px 12px', textAlign: 'right', color: '#475569', fontWeight: 700, width: '150px' }}>Jumlah</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr style={{ borderBottom: '1px solid #e2e8f0' }}>
+                                <td style={{ padding: '12px', color: '#64748b', verticalAlign: 'top' }}>1</td>
+                                <td style={{ padding: '12px' }}>
+                                    <strong style={{ display: 'block', color: '#1e293b' }}>Biaya Layanan Internet WiFi-ID</strong>
+                                    <span style={{ fontSize: '0.75rem', color: '#64748b' }}>Paket Bulanan WiFi 150Mbps - Periode {INDO_MONTHS[thisMonth]} {thisYear}</span>
+                                </td>
+                                <td style={{ padding: '12px', textAlign: 'right', fontWeight: 600, color: '#ef4444', verticalAlign: 'top' }}>{formatRupiah(user.fee)}</td>
+                            </tr>
+                            {/* Previous Unpaid Debt */}
+                            {(() => {
+                                const currentMonthRecord = payments.find(p => p.year === thisYear && p.month === thisMonth);
+                                const currentMonthPaid = currentMonthRecord ? currentMonthRecord.amount_paid : 0;
+                                const previousMonthsDebt = totalDebt - (user.fee - currentMonthPaid);
+
+                                if (previousMonthsDebt > 0) {
+                                    // Cari daftar bulan lalu yang belum lunas
+                                    const unpaidMonthsList = [];
+                                    for (let m = 0; m < thisMonth; m++) {
+                                        const isJoined = thisYear > joinedYear || (thisYear === joinedYear && m >= joinedMonth);
+                                        if (isJoined) {
+                                            const pay = payments.find(p => p.year === thisYear && p.month === m);
+                                            if (!pay) {
+                                                unpaidMonthsList.push(`${INDO_MONTHS[m]} ${thisYear}`);
+                                            } else if (pay.status === 'partial') {
+                                                const debt = Math.max(0, user.fee - pay.amount_paid);
+                                                unpaidMonthsList.push(`${INDO_MONTHS[m]} ${thisYear} (Kurang ${formatRupiah(debt)})`);
+                                            }
+                                        }
+                                    }
+
+                                    const unpaidMonthsText = unpaidMonthsList.length > 0 
+                                        ? `: ${unpaidMonthsList.join(', ')}` 
+                                        : '';
+
+                                    return (
+                                        <tr style={{ borderBottom: '1px solid #e2e8f0' }}>
+                                            <td style={{ padding: '12px', color: '#64748b', verticalAlign: 'top' }}>2</td>
+                                            <td style={{ padding: '12px' }}>
+                                                <strong style={{ display: 'block', color: '#1e293b' }}>Tunggakan Tagihan Sebelumnya</strong>
+                                                <span style={{ fontSize: '0.75rem', color: '#ef4444', fontWeight: 500 }}>
+                                                    Akumulasi tagihan bulan-bulan sebelumnya yang belum dilunasi{unpaidMonthsText}
+                                                </span>
+                                            </td>
+                                            <td style={{ padding: '12px', textAlign: 'right', fontWeight: 600, color: '#ef4444', verticalAlign: 'top' }}>{formatRupiah(previousMonthsDebt)}</td>
+                                        </tr>
+                                    );
+                                }
+                                return null;
+                            })()}
+                        </tbody>
+                    </table>
+                </div>
+
+                {/* Payment Breakdown Calculation Section */}
+                <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '40px' }}>
+                    <div style={{ width: '320px', fontSize: '0.85rem' }}>
+                        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                            <tbody>
+                                <tr>
+                                    <td style={{ padding: '6px 0', color: '#64748b' }}>Total Tagihan</td>
+                                    <td style={{ padding: '6px 0', fontWeight: 600, color: '#1e293b', textAlign: 'right' }}>
+                                        {(() => {
+                                            const currentMonthRecord = payments.find(p => p.year === thisYear && p.month === thisMonth);
+                                            const currentMonthPaid = currentMonthRecord ? currentMonthRecord.amount_paid : 0;
+                                            const previousMonthsDebt = totalDebt - (user.fee - currentMonthPaid);
+                                            return formatRupiah(user.fee + (previousMonthsDebt > 0 ? previousMonthsDebt : 0));
+                                        })()}
+                                    </td>
+                                </tr>
+                                <tr style={{ borderBottom: '1px solid #cbd5e1' }}>
+                                    <td style={{ padding: '6px 0', color: '#64748b' }}>Total Terbayar</td>
+                                    <td style={{ padding: '6px 0', fontWeight: 600, color: '#10b981', textAlign: 'right' }}>
+                                        {(() => {
+                                            const currentMonthRecord = payments.find(p => p.year === thisYear && p.month === thisMonth);
+                                            const currentMonthPaid = currentMonthRecord ? currentMonthRecord.amount_paid : 0;
+                                            return formatRupiah(currentMonthPaid);
+                                        })()}
+                                    </td>
+                                </tr>
+                                <tr style={{ fontSize: '1.05rem' }}>
+                                    <td style={{ padding: '12px 0 6px', fontWeight: 700, color: '#1e293b' }}>Sisa Pembayaran</td>
+                                    <td style={{ padding: '12px 0 6px', fontWeight: 800, color: totalDebt === 0 ? '#10b981' : '#ef4444', textAlign: 'right' }}>
+                                        {formatRupiah(totalDebt)}
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                {/* Payment Instructions & Footer */}
+                <div style={{ borderTop: '2px solid #cbd5e1', paddingTop: '20px', display: 'grid', gridTemplateColumns: '1.2fr 0.8fr', gap: '40px', fontSize: '0.8rem', color: '#475569' }}>
+                    <div>
+                        <h4 style={{ fontWeight: 700, color: '#1e293b', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.02em' }}>Metode Pembayaran Resmi</h4>
+                        <p style={{ margin: '0 0 6px', lineHeight: 1.4 }}>1. **Transfer Bank / Virtual Account** (Mandiri/BCA/BNI/BRI):</p>
+                        <p style={{ margin: '0 0 10px 14px', fontWeight: 600, color: '#1e293b' }}>Hubungi Admin WiFi-ID untuk detail Nomor Rekening Resmi.</p>
+                        <p style={{ margin: '0 0 6px', lineHeight: 1.4 }}>2. **Pembayaran Tunai (Cash)**:</p>
+                        <p style={{ margin: '0 0 10px 14px', lineHeight: 1.4 }}>Silakan membayar langsung ke Admin WiFi-ID resmi di kantor/lokasi instalasi terdekat.</p>
+                    </div>
+                    <div style={{ textAlign: 'right', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                        <div>
+                            <p style={{ fontStyle: 'italic', margin: 0, lineHeight: 1.4 }}>"Lembar tagihan ini diterbitkan secara resmi oleh sistem WiFi-ID. Mohon lakukan pembayaran tepat waktu."</p>
+                        </div>
+                        <div style={{ marginTop: '20px' }}>
+                            <div style={{ borderTop: '1px solid #cbd5e1', display: 'inline-block', width: '160px', padding: '4px 0 0', textAlign: 'center', fontSize: '0.75rem', fontWeight: 600, color: '#64748b' }}>
+                                WiFi-ID Billing System
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     );

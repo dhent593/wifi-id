@@ -1443,24 +1443,35 @@ select {
 /* ==========================================================================
    PRINT STYLES
    ========================================================================== */
+/* Styles for formal invoice print layout */
+.invoice-print-layout {
+    display: none;
+}
+
 @media print {
     body {
         background: white !important;
-        color: black !important;
+        color: #1e293b !important;
         padding-bottom: 0 !important;
     }
-    .navbar, .btn, .fab, .toast-container {
+    .client-header,
+    .client-container,
+    .navbar,
+    .btn,
+    .fab,
+    .toast-container {
         display: none !important;
     }
-    .app-container {
-        padding: 0 !important;
-        margin: 0 !important;
+    .invoice-print-layout {
+        display: block !important;
+        font-family: var(--font-primary);
+        background: white !important;
+        color: #1e293b !important;
+        width: 100% !important;
         max-width: 100% !important;
-    }
-    .card, .client-profile-card, .card-box {
-        background: transparent !important;
-        border: 1px solid #ccc !important;
+        margin: 0 !important;
+        padding: 10px !important;
         box-shadow: none !important;
-        color: black !important;
+        border: none !important;
     }
 }

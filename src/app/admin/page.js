@@ -65,6 +65,7 @@ export default function DashboardPage() {
                     const joinedM = joinedDate.getMonth();
 
                     let userTotalDebt = 0;
+                    const userUnpaidMonths = [];
 
                     // Loop from January (0) to current month of this year
                     for (let m = 0; m <= month; m++) {
@@ -73,16 +74,20 @@ export default function DashboardPage() {
                             const pay = (paymentsData || []).find(p => p.pelanggan_id === user.id && p.month === m);
                             if (pay) {
                                 const debt = Math.max(0, user.fee - pay.amount_paid);
-                                userTotalDebt += debt;
+                                if (debt > 0) {
+                                    userTotalDebt += debt;
+                                    userUnpaidMonths.push(`${INDO_MONTHS[m]} (Kurang ${new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(debt)})`);
+                                }
                             } else {
                                 userTotalDebt += user.fee;
+                                userUnpaidMonths.push(INDO_MONTHS[m]);
                             }
                         }
                     }
 
                     if (userTotalDebt > 0) {
                         unpaidThisMonth += userTotalDebt;
-                        debtors.push({ user, debt: userTotalDebt });
+                        debtors.push({ user, debt: userTotalDebt, unpaidMonths: userUnpaidMonths });
                     }
                 });
 
@@ -390,6 +395,11 @@ export default function DashboardPage() {
                                                     <div>
                                                         <strong style={{ display: 'block', color: 'var(--text-primary)' }}>{debtor.user.name}</strong>
                                                         <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{debtor.user.address}</span>
+                                                        {debtor.unpaidMonths && debtor.unpaidMonths.length > 0 && (
+                                                            <span style={{ fontSize: '0.72rem', color: 'var(--danger)', display: 'block', marginTop: '4px', fontWeight: 600 }}>
+                                                                Bulan: {debtor.unpaidMonths.join(', ')}
+                                                            </span>
+                                                        )}
                                                     </div>
                                                 </div>
                                             </td>
