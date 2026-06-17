@@ -47,13 +47,15 @@ export default function DashboardPage() {
                 const { data: paymentsData, error: paymentsErr } = await db.getPembayaran(year);
                 if (paymentsErr) throw paymentsErr;
                 
-                // Filter current month payments
-                const currentMonthPayments = (paymentsData || []).filter(p => p.month === month);
-
-                // 3. Compute stats
-                const activeUsers = usersData || [];
-
+                // Calculate current month's income
                 let incomeThisMonth = 0;
+                const currentMonthPayments = (paymentsData || []).filter(p => p.month === month);
+                currentMonthPayments.forEach(p => {
+                    incomeThisMonth += p.amount_paid;
+                });
+
+                // 3. Compute stats (accumulated unpaid debt from join month to current month)
+                const activeUsers = usersData || [];
                 let unpaidThisMonth = 0;
                 const debtors = [];
 
@@ -62,21 +64,25 @@ export default function DashboardPage() {
                     const joinedY = joinedDate.getFullYear();
                     const joinedM = joinedDate.getMonth();
 
-                    // Client is billable if they joined in or before current month/year
-                    if (year > joinedY || (year === joinedY && month >= joinedM)) {
-                        const userPay = currentMonthPayments.find(p => p.pelanggan_id === user.id);
-                        
-                        if (userPay) {
-                            incomeThisMonth += userPay.amount_paid;
-                            const debt = Math.max(0, user.fee - userPay.amount_paid);
-                            if (debt > 0) {
-                                unpaidThisMonth += debt;
-                                debtors.push({ user, debt });
+                    let userTotalDebt = 0;
+
+                    // Loop from January (0) to current month of this year
+                    for (let m = 0; m <= month; m++) {
+                        const isJoined = year > joinedY || (year === joinedY && m >= joinedM);
+                        if (isJoined) {
+                            const pay = (paymentsData || []).find(p => p.pelanggan_id === user.id && p.month === m);
+                            if (pay) {
+                                const debt = Math.max(0, user.fee - pay.amount_paid);
+                                userTotalDebt += debt;
+                            } else {
+                                userTotalDebt += user.fee;
                             }
-                        } else {
-                            unpaidThisMonth += user.fee;
-                            debtors.push({ user, debt: user.fee });
                         }
+                    }
+
+                    if (userTotalDebt > 0) {
+                        unpaidThisMonth += userTotalDebt;
+                        debtors.push({ user, debt: userTotalDebt });
                     }
                 });
 
@@ -321,7 +327,7 @@ export default function DashboardPage() {
                     <div>
                         <h3 style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '4px', fontWeight: 600 }}>Total Tunggakan</h3>
                         <p style={{ fontSize: '1.75rem', fontWeight: 800 }} className="text-danger">{formatRupiah(stats.unpaidThisMonth)}</p>
-                        <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Belum lunas bulan berjalan</span>
+                        <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Total tunggakan belum lunas</span>
                     </div>
                 </div>
             </div>
@@ -345,12 +351,12 @@ export default function DashboardPage() {
 
                 {/* Largest Unpaid Users */}
                 <div className="card">
-                    <h2 style={{ fontSize: '1.1rem', fontWeight: 700, marginBottom: '20px' }}>Tunggakan Bulan Ini</h2>
+                    <h2 style={{ fontSize: '1.1rem', fontWeight: 700, marginBottom: '20px' }}>Daftar Tunggakan Pelanggan</h2>
                     <div className="table-responsive">
                         {unpaidDebtors.length === 0 ? (
                             <div style={{ textAlign: 'center', padding: '24px 0', color: '#64748b' }}>
                                 <UserCheck size={36} style={{ color: '#10b981', marginBottom: '8px' }} />
-                                <p style={{ fontWeight: 600 }}>Hebat! Semua pelanggan bulan ini sudah lunas.</p>
+                                <p style={{ fontWeight: 600 }}>Hebat! Semua tagihan pelanggan lunas.</p>
                             </div>
                         ) : (
                             <table className="table mobile-card-table">
